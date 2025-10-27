@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { Hero } from "@/components/Hero";
 import { Dashboard } from "@/components/Dashboard";
 import { IsabellaChat } from "@/components/IsabellaChat";
@@ -10,12 +12,33 @@ import { Navigation, type NavView } from "@/components/Navigation";
 type AppView = "hero" | NavView;
 
 const Index = () => {
+  const navigate = useNavigate();
   const [currentView, setCurrentView] = useState<AppView>("hero");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        setIsAuthenticated(true);
+        setCurrentView("dashboard");
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        setIsAuthenticated(true);
+        setCurrentView("dashboard");
+      } else {
+        setIsAuthenticated(false);
+        setCurrentView("hero");
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   const handleEnter = () => {
-    setIsAuthenticated(true);
-    setCurrentView("dashboard");
+    navigate("/auth");
   };
 
   const renderView = () => {
