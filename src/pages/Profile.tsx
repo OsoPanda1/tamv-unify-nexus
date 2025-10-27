@@ -1,61 +1,44 @@
-<Tabs defaultValue="overview" className="space-y-4">
-  <TabsList className="bg-card/30 border border-primary/20 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2">
-    <TabsTrigger value="overview">Resumen</TabsTrigger>
-    <TabsTrigger value="gallery">Galería</TabsTrigger>
-    <TabsTrigger value="posts">Posts</TabsTrigger>
-    <TabsTrigger value="reels">Reels</TabsTrigger>
-    <TabsTrigger value="streams">Streamings</TabsTrigger>
-    <TabsTrigger value="groups">Grupos</TabsTrigger>
-    <TabsTrigger value="channels">Canales</TabsTrigger>
-    <TabsTrigger value="wishlist">Wishlist</TabsTrigger>
-  </TabsList>
+import React, { useState, useEffect } from 'react';
+import ProfileHeader from './ProfileHeader';
+import TabNavigator from './TabNavigator';
+import OverviewTab from './tabs/OverviewTab';
+import GalleryTab from './tabs/GalleryTab';
+import PostsTab from './tabs/PostsTab';
+import ReelsTab from './tabs/ReelsTab';
+import WishlistTab from './tabs/WishlistTab';
 
-  <TabsContent value="gallery">
-    <Card className="glass-effect p-6 border-primary/20">
-      <h2 className="text-xl font-bold mb-4">🎨 Galería Multisensorial</h2>
-      {/* Mapear imágenes del usuario */}
-    </Card>
-  </TabsContent>
+const ProfilePage = ({ userId }) => {
+  const [activeTab, setActiveTab] = useState('overview');
+  const [userData, setUserData] = useState(null);
 
-  <TabsContent value="posts">
-    <Card className="glass-effect p-6 border-primary/20">
-      <h2 className="text-xl font-bold mb-4">🧠 Ideas & Pensamientos</h2>
-      {/* Mapear publicaciones estilo Twitter */}
-    </Card>
-  </TabsContent>
+  useEffect(() => {
+    fetch(`/api/users/${userId}`)
+      .then(res => res.json())
+      .then(data => setUserData(data));
+  }, [userId]);
 
-  <TabsContent value="reels">
-    <Card className="glass-effect p-6 border-primary/20">
-      <h2 className="text-xl font-bold mb-4">📺 Reels</h2>
-      {/* Mapear videos cortos estilo TikTok */}
-    </Card>
-  </TabsContent>
+  const renderTab = () => {
+    switch (activeTab) {
+      case 'overview': return <OverviewTab user={userData} />;
+      case 'gallery': return <GalleryTab user={userData} />;
+      case 'posts': return <PostsTab user={userData} />;
+      case 'reels': return <ReelsTab user={userData} />;
+      case 'wishlist': return <WishlistTab user={userData} />;
+      default: return null;
+    }
+  };
 
-  <TabsContent value="streams">
-    <Card className="glass-effect p-6 border-primary/20">
-      <h2 className="text-xl font-bold mb-4">🔴 Streamings en Vivo</h2>
-      {/* Integración con video en vivo */}
-    </Card>
-  </TabsContent>
+  return (
+    <div className="bg-gray-900 text-white min-h-screen">
+      {userData && (
+        <>
+          <ProfileHeader user={userData} />
+          <TabNavigator activeTab={activeTab} setActiveTab={setActiveTab} />
+          <div className="p-4">{renderTab()}</div>
+        </>
+      )}
+    </div>
+  );
+};
 
-  <TabsContent value="groups">
-    <Card className="glass-effect p-6 border-primary/20">
-      <h2 className="text-xl font-bold mb-4">🌀 Grupos</h2>
-      {/* Listado de grupos TAMV */}
-    </Card>
-  </TabsContent>
-
-  <TabsContent value="channels">
-    <Card className="glass-effect p-6 border-primary/20">
-      <h2 className="text-xl font-bold mb-4">📡 Canales</h2>
-      {/* Canales temáticos, estilo Discord */}
-    </Card>
-  </TabsContent>
-
-  <TabsContent value="wishlist">
-    <Card className="glass-effect p-6 border-primary/20">
-      <h2 className="text-xl font-bold mb-4">🛒 Lista de Deseos</h2>
-      {/* Favoritos, productos, ideas guardadas */}
-    </Card>
-  </TabsContent>
-</Tabs>
+export default ProfilePage;
