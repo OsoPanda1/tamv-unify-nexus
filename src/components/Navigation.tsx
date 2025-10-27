@@ -2,7 +2,7 @@ import { Brain, Sparkles, Coins, Shield, LayoutDashboard, Globe, User, MessageSq
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
-export type NavView = "dashboard" | "isabella" | "dreamspaces" | "credits" | "sentinel";
+export type NavView = "dashboard" | "isabella" | "dreamspaces" | "credits" | "sentinel" | "wall";
 
 interface NavigationProps {
   currentView: NavView | "hero";
@@ -13,12 +13,12 @@ export const Navigation = ({ currentView, onNavigate }: NavigationProps) => {
   const navigate = useNavigate();
   
   const navItems = [
-    { id: "dashboard" as NavView, icon: LayoutDashboard, label: "Dashboard", gradient: "from-primary to-primary-glow" },
-    { id: "wall", icon: Globe, label: "Muro", gradient: "from-secondary to-cyan-400", isRoute: true },
-    { id: "profile", icon: User, label: "Perfil", gradient: "from-accent to-yellow-400", isRoute: true },
-    { id: "chats", icon: MessageSquare, label: "Chats", gradient: "from-resonance to-pink-400", isRoute: true },
-    { id: "gallery", icon: Image, label: "Galería", gradient: "from-primary to-purple-400", isRoute: true },
-    { id: "lives", icon: Radio, label: "Lives", gradient: "from-destructive to-red-400", isRoute: true },
+    { id: "wall", icon: Globe, label: "Muro", gradient: "from-primary to-primary-glow", isRoute: true, path: "/" },
+    { id: "profile", icon: User, label: "Perfil", gradient: "from-accent to-yellow-400", isRoute: true, path: "/profile" },
+    { id: "chats", icon: MessageSquare, label: "Chats", gradient: "from-resonance to-pink-400", isRoute: true, path: "/chats" },
+    { id: "gallery", icon: Image, label: "Galería", gradient: "from-secondary to-cyan-400", isRoute: true, path: "/gallery" },
+    { id: "lives", icon: Radio, label: "Lives", gradient: "from-destructive to-red-400", isRoute: true, path: "/lives" },
+    { id: "dashboard" as NavView, icon: LayoutDashboard, label: "Dashboard", gradient: "from-primary to-purple-400" },
     { id: "isabella" as NavView, icon: Brain, label: "ISABELLA AI™", gradient: "from-primary to-purple-400" },
     { id: "dreamspaces" as NavView, icon: Sparkles, label: "DreamSpaces™", gradient: "from-secondary to-cyan-400" },
     { id: "credits" as NavView, icon: Coins, label: "Créditos", gradient: "from-accent to-yellow-400" },
@@ -27,7 +27,7 @@ export const Navigation = ({ currentView, onNavigate }: NavigationProps) => {
 
   const handleNavClick = (item: any) => {
     if (item.isRoute) {
-      navigate(`/${item.id}`);
+      navigate(item.path || `/${item.id}`);
     } else {
       onNavigate(item.id as NavView);
     }
@@ -55,7 +55,7 @@ export const Navigation = ({ currentView, onNavigate }: NavigationProps) => {
           <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide">
             {navItems.map((item) => {
               const Icon = item.icon;
-              const isActive = currentView === item.id || window.location.pathname === `/${item.id}`;
+              const isActive = currentView === item.id || window.location.pathname === (item.path || `/${item.id}`);
               
               return (
                 <Button

@@ -3,7 +3,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import GlobalWall from "./pages/GlobalWall";
 import Profile from "./pages/Profile";
@@ -21,9 +20,8 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route path="/" element={<GlobalWall />} />
           <Route path="/auth" element={<Auth />} />
-          <Route path="/wall" element={<GlobalWall />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/chats" element={<Chats />} />
           <Route path="/gallery" element={<Gallery />} />
