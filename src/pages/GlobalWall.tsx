@@ -26,9 +26,24 @@ export default function GlobalWall() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    checkAuth();
+    // CRITICAL: Setup auth state listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null);
+        setIsAuthenticated(!!session?.user);
+        if (session?.user) setShowHero(false);
+      }
+    );
+
+    // THEN check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      setIsAuthenticated(!!session?.user);
+      if (session?.user) setShowHero(false);
+    });
+
     fetchPosts();
-    initMatrixEffect();
+    const matrixCleanup = initMatrixEffect();
 
     // Subscripción instantánea a cambios: Quantum RealTime Sync
     const channel = supabase
@@ -39,16 +54,11 @@ export default function GlobalWall() {
       .subscribe();
 
     return () => {
+      subscription.unsubscribe();
       supabase.removeChannel(channel);
+      if (matrixCleanup) matrixCleanup();
     };
   }, []);
-
-  const checkAuth = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    setUser(user);
-    setIsAuthenticated(!!user);
-    if (user) setShowHero(false);
-  };
 
   const initMatrixEffect = () => {
     const canvas = canvasRef.current;
@@ -258,13 +268,88 @@ export default function GlobalWall() {
             exit={{ opacity: 0 }}
             className="relative z-10"
           >
-            {isAuthenticated && <Navigation currentView="wall" onNavigate={(view) => {}} />}
-            <div className={`max-w-5xl mx-auto space-y-8 ${isAuthenticated ? 'pt-32 p-8' : 'pt-20 p-8'}`}>
-              {/* Header, Composer, ✨Quantum Post Feed, sin cambios porque es escalable */}
-              {/* ... (el resto se mantiene como tu feed original, solo añade badges quantum, cards glass, UI evolutiva) */}
-              {/* Aquí puedes integrar también a Isabella y companions como panel lateral, chat, badge floating o IA Card */}
-            </div>
-          </motion.div>
+              {isAuthenticated && <Navigation currentView="wall" onNavigate={(view) => {}} />}
+              <div className={`max-w-5xl mx-auto space-y-8 ${isAuthenticated ? 'pt-32 p-8' : 'pt-20 p-8'}`}>
+                {/* Create Post Card */}
+                {isAuthenticated && (
+                  <Card className="glass-effect p-6 glow-quantum">
+                    <Textarea
+                      placeholder="✨ Comparte tu experiencia quantum..."
+                      value={content}
+                      onChange={(e) => setContent(e.target.value)}
+                      className="bg-card border-primary/30 min-h-[120px] resize-none"
+                    />
+                    <div className="flex justify-between items-center mt-4">
+                      <div className="flex gap-2">
+                        <Button variant="ghost" size="icon"><ImageIcon className="w-5 h-5" /></Button>
+                        <Button variant="ghost" size="icon"><Video className="w-5 h-5" /></Button>
+                        <Button variant="ghost" size="icon"><Mic className="w-5 h-5" /></Button>
+                        <Button variant="ghost" size="icon"><Upload className="w-5 h-5" /></Button>
+                      </div>
+                      <Button onClick={createPost} className="bg-gradient-quantum">
+                        <Sparkles className="w-4 h-4 mr-2" />
+                        Publicar
+                      </Button>
+                    </div>
+                  </Card>
+                )}
+
+                {/* Posts Feed */}
+                <div className="space-y-6">
+                  {posts.map((post) => (
+                    <motion.div
+                      key={post.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4 }}
+                    >
+                      <Card className="glass-effect p-6 hover:glow-quantum transition-all">
+                        <div className="flex items-start gap-4">
+                          <Avatar className="border-2 border-primary/30">
+                            <AvatarImage src={post.profiles?.avatar_url} />
+                            <AvatarFallback className="bg-primary/20">
+                              {post.profiles?.username?.[0]?.toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="font-orbitron font-bold">{post.profiles?.username}</span>
+                              {post.profiles?.verified && (
+                                <Badge className="bg-gradient-quantum text-white">✓</Badge>
+                              )}
+                            </div>
+                            <p className="text-sm text-muted-foreground mb-4">
+                              {new Date(post.created_at).toLocaleDateString()}
+                            </p>
+                            <p className="text-foreground whitespace-pre-wrap">{post.content}</p>
+                            
+                            <div className="flex gap-6 mt-4 pt-4 border-t border-primary/20">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleResonance(post.id)}
+                                className="text-resonance hover:text-resonance/80"
+                              >
+                                <Heart className="w-4 h-4 mr-1" />
+                                {post.resonance_count || 0}
+                              </Button>
+                              <Button variant="ghost" size="sm" className="text-secondary">
+                                <MessageCircle className="w-4 h-4 mr-1" />
+                                {post.comments_count || 0}
+                              </Button>
+                              <Button variant="ghost" size="sm" className="text-accent">
+                                <Share2 className="w-4 h-4 mr-1" />
+                                {post.shares_count || 0}
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
         )}
       </AnimatePresence>
     </div>

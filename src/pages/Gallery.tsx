@@ -10,9 +10,26 @@ import { toast } from "sonner";
 
 export default function Gallery() {
   const [artworks, setArtworks] = useState<any[]>([]);
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    fetchArtworks();
+    // CRITICAL: Setup auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null);
+        fetchArtworks();
+      }
+    );
+
+    // Check existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      fetchArtworks();
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const fetchArtworks = async () => {

@@ -26,19 +26,34 @@ export default function Profile() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    checkAuth();
-  }, []);
+    // CRITICAL: Setup auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (session?.user) {
+          setUser(session.user);
+          fetchProfile(session.user.id);
+          setIsLoading(false);
+        } else {
+          navigate("/auth");
+        }
+      }
+    );
 
-  const checkAuth = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      navigate("/auth");
-      return;
-    }
-    setUser(user);
-    await fetchProfile(user.id);
-    setIsLoading(false);
-  };
+    // Check existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUser(session.user);
+        fetchProfile(session.user.id);
+        setIsLoading(false);
+      } else {
+        navigate("/auth");
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [navigate]);
 
   const fetchProfile = async (userId: string) => {
     const { data } = await supabase
