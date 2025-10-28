@@ -138,7 +138,7 @@ export default function GlobalWall() {
       exit={{ opacity: 0 }}
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
-      nvas ref={canvasRef} className="absolute insetset-0 -z-10" />
+      <canvas ref={canvasRef} className="absolute inset-0 -z-10" />
 
       <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/80 to-background -z-10 pointer-events-none" />
       <div className="max-w-6xl mx-auto text-center space-y-8 px-4 z-10">

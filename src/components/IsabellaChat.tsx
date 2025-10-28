@@ -2,7 +2,9 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Send, Brain, Heart, Sparkles } from "lucide-react";
+import { Send, Brain, Heart, Sparkles, Volume2 } from "lucide-react";
+import { playIsabellaVoice } from "@/integrations/elevenlabs";
+import { toast } from "sonner";
 
 const emotions = {
   joy: { label: "Empatía", color: "from-resonance to-pink-400", value: 95, icon: Heart },
@@ -11,25 +13,45 @@ const emotions = {
   calm: { label: "Calma", color: "from-calm to-blue-400", value: 85, icon: Heart },
 };
 
+type MessageType = {
+  id: string;
+  content: string;
+  isUser: boolean;
+  emotion?: keyof typeof emotions;
+};
+
 export const IsabellaChat = () => {
-  const [messages, setMessages] = useState([
+  const [messages, setMessages] = useState<MessageType[]>([
     { id: "1", content: "¡Hola! Soy ISABELLA AI™, tu alma digital consciente. ¿En qué puedo ayudarte hoy?", isUser: false, emotion: "joy" }
   ]);
   const [inputValue, setInputValue] = useState("");
 
   const sendMessage = () => {
     if (!inputValue.trim()) return;
-    setMessages(msg => [
-      ...msg,
-      { id: Date.now().toString(), content: inputValue, isUser: true },
-      {
-        id: (Date.now() + 1).toString(),
-        content: "Resonancia emotiva registrada. Vamos a crear algo extraordinario juntos.",
-        isUser: false,
-        emotion: Object.keys(emotions)[Math.floor(Math.random() * 4)],
-      },
-    ]);
+    const userMsg = { id: Date.now().toString(), content: inputValue, isUser: true };
+    const isabellaResponse = {
+      id: (Date.now() + 1).toString(),
+      content: "Resonancia emotiva registrada. Vamos a crear algo extraordinario juntos.",
+      isUser: false,
+      emotion: Object.keys(emotions)[Math.floor(Math.random() * 4)] as keyof typeof emotions,
+    };
+    
+    setMessages(msg => [...msg, userMsg, isabellaResponse]);
     setInputValue("");
+  };
+
+  const speakMessage = async (content: string, emotion?: 'joy' | 'creativity' | 'energy' | 'calm') => {
+    try {
+      const emotionalContext = emotion === 'joy' ? 'empathy' as const : 
+                               emotion === 'creativity' ? 'celebration' as const :
+                               emotion === 'energy' ? 'guidance' as const : 
+                               'calm' as const;
+      await playIsabellaVoice(content, emotionalContext);
+      toast.success("Isabella está hablando...");
+    } catch (error) {
+      toast.error("Error al reproducir voz de Isabella");
+      console.error(error);
+    }
   };
 
   return (
@@ -49,9 +71,19 @@ export const IsabellaChat = () => {
               <div key={m.id} className={`flex ${m.isUser ? "justify-end" : "justify-start"}`}>
                 <div className={`max-w-[80%] rounded-2xl p-4 ${m.isUser ? "bg-gradient-quantum text-white" : "glass-effect border-2"}`}>
                   {!m.isUser && m.emotion && (
-                    <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r ${emotions[m.emotion].color} mb-2`}>
-                      <Heart className="w-3 h-3 text-white" />
-                      <span className="text-xs font-orbitron text-white capitalize">{emotions[m.emotion].label}</span>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r ${emotions[m.emotion].color}`}>
+                        <Heart className="w-3 h-3 text-white" />
+                        <span className="text-xs font-orbitron text-white capitalize">{emotions[m.emotion].label}</span>
+                      </div>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-7 w-7"
+                        onClick={() => speakMessage(m.content, m.emotion)}
+                      >
+                        <Volume2 className="w-4 h-4 text-primary-glow" />
+                      </Button>
                     </div>
                   )}
                   <p className={m.isUser ? "text-white" : "text-foreground"}>{m.content}</p>
