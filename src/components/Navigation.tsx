@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 
 export type NavView =
   | "dashboard" | "isabella" | "dreamspaces" | "credits"
-  | "sentinel" | "wall" | "profile" | "chats" | "gallery" | "lives";
+  | "sentinel" | "wall" | "profile" | "chats" | "gallery" | "lives"
+  | "marketplace" | "admin" | "knowledge";
 
 interface NavigationProps {
   currentView: NavView | "hero";
@@ -23,6 +24,8 @@ export const Navigation = ({ currentView, onNavigate }: NavigationProps) => {
     { id: "chats", icon: MessageSquare, label: "Chats", gradient: "from-resonance to-pink-400", isRoute: true, path: "/chats" },
     { id: "gallery", icon: Image, label: "Galería", gradient: "from-secondary to-cyan-400", isRoute: true, path: "/gallery" },
     { id: "lives", icon: Radio, label: "Lives", gradient: "from-destructive to-red-400", isRoute: true, path: "/lives" },
+    { id: "marketplace", icon: Coins, label: "Market", gradient: "from-accent to-yellow-400", isRoute: true, path: "/marketplace" },
+    { id: "knowledge", icon: Brain, label: "Knowledge", gradient: "from-primary to-purple-400", isRoute: true, path: "/knowledge" },
     { id: "dashboard", icon: LayoutDashboard, label: "Dashboard", gradient: "from-primary to-purple-400" },
     { id: "isabella", icon: Brain, label: "ISABELLA AI™", gradient: "from-primary to-purple-400" },
     { id: "dreamspaces", icon: Sparkles, label: "DreamSpaces™", gradient: "from-secondary to-cyan-400" },
