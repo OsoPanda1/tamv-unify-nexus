@@ -1,9 +1,10 @@
 /**
  * 🧬 TAMV MD-X4™ Knowledge Repository
- * Sistema central de gestión de Knowledge Cells
+ * Sistema central de gestión de Knowledge Cells + Phoenix Protocol
  */
 
 import { KnowledgeCell, KnowledgeRepo, CellType } from './KnowledgeCell.types';
+import { phoenixKnowledgeRepo } from './PhoenixProtocol.repository';
 
 export class KnowledgeRepository {
   private repo: KnowledgeRepo;
@@ -236,6 +237,33 @@ export class KnowledgeRepository {
 
   exportRepository(): string {
     return JSON.stringify(this.repo, null, 2);
+  }
+
+  // Phoenix Protocol Integration
+  getPhoenixRepo() {
+    return phoenixKnowledgeRepo;
+  }
+
+  getAllPhoenixCells() {
+    return Object.values(phoenixKnowledgeRepo.cells);
+  }
+
+  getUnifiedStats() {
+    return {
+      tamv: {
+        total: this.repo.metadata.totalCells,
+        active: this.repo.metadata.activeCells,
+      },
+      phoenix: {
+        total: phoenixKnowledgeRepo.metadata.totalCells,
+        active: phoenixKnowledgeRepo.metadata.activeCells,
+        quantum: phoenixKnowledgeRepo.metadata.quantumReadyCells,
+      },
+      combined: {
+        total: this.repo.metadata.totalCells + phoenixKnowledgeRepo.metadata.totalCells,
+        active: this.repo.metadata.activeCells + phoenixKnowledgeRepo.metadata.activeCells,
+      }
+    };
   }
 }
 

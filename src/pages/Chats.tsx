@@ -8,6 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { Send, Video, Phone, MoreVertical } from "lucide-react";
+import { Navigation } from "@/components/Navigation";
 
 export default function Chats() {
   const [chats, setChats] = useState<any[]>([]);
@@ -120,7 +121,8 @@ export default function Chats() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="flex h-screen">
+      <Navigation currentView="chats" onNavigate={() => {}} />
+      <div className="flex h-screen pt-20">
         {/* Sidebar - Lista de Chats */}
         <div className="w-80 border-r border-primary/20 glass-effect">
           <div className="p-6 border-b border-primary/20">

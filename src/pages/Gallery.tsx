@@ -7,6 +7,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { motion } from "framer-motion";
 import { Heart, Eye, Coins, Sparkles } from "lucide-react";
 import { toast } from "sonner";
+import { Navigation } from "@/components/Navigation";
 
 export default function Gallery() {
   const [artworks, setArtworks] = useState<any[]>([]);
@@ -45,8 +46,9 @@ export default function Gallery() {
   };
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-background">
+      <Navigation currentView="gallery" onNavigate={() => {}} />
+      <div className="max-w-7xl mx-auto pt-32 px-6 pb-12">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
