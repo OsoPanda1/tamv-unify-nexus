@@ -8,7 +8,11 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, MessageCircle, Share2, Sparkles, Image as ImageIcon, Video, Mic, Upload, Globe, Zap, Brain, Shield, Bot } from "lucide-react";
+import { Heart, MessageCircle, Share2, Sparkles, Image as ImageIcon, Video, Mic, Upload, Globe, Zap, Brain, Shield, Bot, Layers, Cpu, Network, Orbit } from "lucide-react";
+import heroTechImage from "@/assets/hero-tech.webp";
+import dreamspaceImage from "@/assets/dreamspace-hero.webp";
+import galleryImage from "@/assets/gallery-preview.webp";
+import metaverseCityImage from "@/assets/metaverse-city.webp";
 import { Navigation } from "@/components/Navigation";
 
 // Lazy-load avatar AI Isabella animado
@@ -161,7 +165,7 @@ export default function GlobalWall() {
         >
           <Sparkles className="w-7 h-7 text-primary-glow animate-pulse-fast" />
           <span className="text-lg font-orbitron text-foreground tracking-wide">TAMV MD-X4™ Universe</span>
-          <Badge className="bg-gradient-quantum text-white shadow-glow-quantum">Quantum DreamSpaces</Badge>
+          <Badge className="bg-gradient-quantum text-white shadow-glow-quantum">Metaverso TAMV MD-X4</Badge>
         </motion.div>
         {/* Main Title */}
         <motion.h1
@@ -170,9 +174,9 @@ export default function GlobalWall() {
           transition={{ delay: 0.42 }}
           className="text-8xl md:text-[8.5vw] font-orbitron font-black tracking-tight leading-tight gradient-quantum-hero"
         >
-          <span className="gradient-text-quantum animate-glow">Quantum</span>
+          <span className="gradient-text-quantum animate-glow">Metaverso</span>
           <br />
-          <span className="gradient-text-dream animate-crystal">DreamSpaces</span>
+          <span className="gradient-text-dream animate-crystal">TAMV MD-X4™</span>
         </motion.h1>
         {/* Isabella AI Avatar */}
         <Suspense fallback={null}>
@@ -225,7 +229,7 @@ export default function GlobalWall() {
         >
           {[
             { icon: Brain, text: "ISABELLA AI™", color: "text-primary-glow", desc: "Guía Quantum Sensitiva" },
-            { icon: Sparkles, text: "DreamSpaces™", color: "text-secondary-glow", desc: "Presencia 3D-4D" },
+            { icon: Orbit, text: "Metaverso TAMV™", color: "text-secondary-glow", desc: "Presencia 3D-4D" },
             { icon: Shield, text: "Anubis Sentinel™", color: "text-accent-glow", desc: "Seguridad Quantum" },
             { icon: Bot, text: "Companions XR", color: "text-accent", desc: "Asistentes y Bots" },
           ].map((feature, i) => (

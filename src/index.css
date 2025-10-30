@@ -150,6 +150,27 @@ All colors MUST be HSL.
     from { filter: drop-shadow(0 0 10px hsla(270 80% 60% / 0.5)); }
     to { filter: drop-shadow(0 0 20px hsla(270 80% 60% / 0.8)); }
   }
+  
+  .animate-shimmer {
+    animation: shimmer 2s ease-in-out infinite;
+  }
+  
+  @keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+  }
+  
+  .hover-lift {
+    @apply transition-all duration-300 hover:-translate-y-2 hover:shadow-glow;
+  }
+  
+  .glass-card {
+    @apply bg-card-glass backdrop-blur-xl border border-border/50;
+  }
+  
+  .quantum-border {
+    @apply border border-primary/30 hover:border-primary/60 transition-all;
+  }
 }
 
 @layer base {

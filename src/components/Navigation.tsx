@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
   Brain, Sparkles, Coins, Shield, LayoutDashboard, Globe,
-  User, MessageSquare, Image, Radio,
+  User, MessageSquare, Image, Radio, Orbit, Layers, Network, Cpu, Database
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -25,10 +26,10 @@ export const Navigation = ({ currentView, onNavigate }: NavigationProps) => {
     { id: "gallery", icon: Image, label: "Galería", gradient: "from-secondary to-cyan-400", isRoute: true, path: "/gallery" },
     { id: "lives", icon: Radio, label: "Lives", gradient: "from-destructive to-red-400", isRoute: true, path: "/lives" },
     { id: "marketplace", icon: Coins, label: "Market", gradient: "from-accent to-yellow-400", isRoute: true, path: "/marketplace" },
-    { id: "knowledge", icon: Brain, label: "Knowledge", gradient: "from-primary to-purple-400", isRoute: true, path: "/knowledge" },
-    { id: "dashboard", icon: LayoutDashboard, label: "Dashboard", gradient: "from-primary to-purple-400" },
-    { id: "isabella", icon: Brain, label: "ISABELLA AI™", gradient: "from-primary to-purple-400" },
-    { id: "dreamspaces", icon: Sparkles, label: "DreamSpaces™", gradient: "from-secondary to-cyan-400" },
+    { id: "knowledge", icon: Layers, label: "Knowledge", gradient: "from-primary to-purple-400", isRoute: true, path: "/knowledge" },
+    { id: "dashboard", icon: Database, label: "Dashboard", gradient: "from-primary to-purple-400" },
+    { id: "isabella", icon: Cpu, label: "ISABELLA AI™", gradient: "from-primary to-purple-400" },
+    { id: "dreamspaces", icon: Orbit, label: "Metaverso", gradient: "from-secondary to-cyan-400" },
     { id: "credits", icon: Coins, label: "Créditos", gradient: "from-accent to-yellow-400" },
     { id: "sentinel", icon: Shield, label: "Anubis™", gradient: "from-resonance to-pink-400" },
   ];
@@ -42,15 +43,24 @@ export const Navigation = ({ currentView, onNavigate }: NavigationProps) => {
       <div className="max-w-7xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate("/")}>
-            <div className="w-10 h-10 rounded-lg bg-gradient-quantum flex items-center justify-center shadow-glow">
-              <Sparkles className="w-6 h-6 text-white" />
-            </div>
+          <motion.div 
+            className="flex items-center gap-3 cursor-pointer" 
+            onClick={() => navigate("/")}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <motion.div 
+              className="w-10 h-10 rounded-lg bg-gradient-quantum flex items-center justify-center shadow-glow"
+              animate={{ rotate: [0, 360] }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            >
+              <Orbit className="w-6 h-6 text-white" />
+            </motion.div>
             <div>
               <h1 className="text-xl font-orbitron font-bold text-gradient-quantum">TAMV</h1>
               <p className="text-xs text-muted-foreground">MD-X4™ Ecosystem</p>
             </div>
-          </div>
+          </motion.div>
           {/* Navigation Items */}
           <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide">
             {navItems.map((item) => {
