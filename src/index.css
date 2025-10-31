@@ -171,14 +171,22 @@ All colors MUST be HSL.
   .quantum-border {
     @apply border border-primary/30 hover:border-primary/60 transition-all;
   }
-}
 
-@layer base {
-  * {
-    @apply border-border;
+  @keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
   }
 
-  body {
-    @apply bg-background text-foreground;
+  @keyframes spin-reverse {
+    from { transform: rotate(360deg); }
+    to { transform: rotate(0deg); }
+  }
+
+  .animate-spin-slow {
+    animation: spin-slow 20s linear infinite;
+  }
+
+  .animate-spin-reverse {
+    animation: spin-reverse 15s linear infinite;
   }
 }

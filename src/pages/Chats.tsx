@@ -86,6 +86,16 @@ export default function Chats() {
       const chatList = data.map(item => item.chats).filter(Boolean);
       setChats(chatList);
     }
+
+    // Si no hay chats, crear algunos de ejemplo
+    if (!data || data.length === 0) {
+      const exampleChats = [
+        { id: 'demo-1', name: 'TAMV Comunidad Global', chat_type: 'group', avatar_url: null },
+        { id: 'demo-2', name: 'DreamSpaces Creadores', chat_type: 'group', avatar_url: null },
+        { id: 'demo-3', name: 'ISABELLA AI Support', chat_type: 'private', avatar_url: null },
+      ];
+      setChats(exampleChats);
+    }
   };
 
   const fetchMessages = async (chatId: string) => {
