@@ -1,36 +1,28 @@
 import { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Card } from "@/components/ui/card";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
+import { Button, Textarea, Card, Avatar, AvatarImage, AvatarFallback, Badge } from "@/components/ui";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, MessageCircle, Share2, Sparkles, Image as ImageIcon, Video, Mic, Upload, Globe, Zap, Brain, Shield, Bot, Layers, Cpu, Network, Orbit } from "lucide-react";
-import heroTechImage from "@/assets/hero-tech.webp";
-import dreamspaceImage from "@/assets/dreamspace-hero.webp";
-import galleryImage from "@/assets/gallery-preview.webp";
-import metaverseCityImage from "@/assets/metaverse-city.webp";
-import { Navigation } from "@/components/Navigation";
-
-// Lazy-load avatar AI Isabella animado
+import {
+  Heart, MessageCircle, Share2, Sparkles, Image as ImageIcon, Video, Mic, Upload, Globe, Zap, Brain,
+  Shield, Bot, Layers, Cpu, Network, Orbit, ShoppingCart, Music, Users, GraduationCap, Gift,
+  Store, Radio
+} from "lucide-react";
 const IsabellaAI = lazy(() => import("@/components/IsabellaAI"));
 
 export default function GlobalWall() {
   const navigate = useNavigate();
-  const [posts, setPosts] = useState<any[]>([]);
-  const [content, setContent] = useState("");
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [selectedMedia, setSelectedMedia] = useState<File[]>([]);
+  const [content, setContent] = useState("");
+  const [posts, setPosts] = useState([]);
+  const [selectedMedia, setSelectedMedia] = useState([]);
   const [showHero, setShowHero] = useState(true);
   const [isabellaActive, setIsabellaActive] = useState(true);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasRef = useRef(null);
 
   useEffect(() => {
-    // CRITICAL: Setup auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setUser(session?.user ?? null);
@@ -38,18 +30,14 @@ export default function GlobalWall() {
         if (session?.user) setShowHero(false);
       }
     );
-
-    // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       setIsAuthenticated(!!session?.user);
       if (session?.user) setShowHero(false);
     });
-
     fetchPosts();
     const matrixCleanup = initMatrixEffect();
 
-    // Subscripción instantánea a cambios: Quantum RealTime Sync
     const channel = supabase
       .channel('posts-changes')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, () => {
@@ -74,7 +62,7 @@ export default function GlobalWall() {
     const chars = '01TAMVX4QUANTUM';
     const fontSize = 14;
     const columns = canvas.width / fontSize;
-    const drops: number[] = [];
+    const drops = [];
     for (let i = 0; i < columns; i++) drops[i] = Math.random() * canvas.height;
     const draw = () => {
       ctx.fillStyle = 'rgba(16, 16, 20, 0.045)';
@@ -102,19 +90,11 @@ export default function GlobalWall() {
   };
 
   const createPost = async () => {
-    if (!isAuthenticated) {
-      toast.error("Debes iniciar sesión para publicar");
-      navigate("/auth");
-      return;
-    }
+    if (!isAuthenticated) { toast.error("Debes iniciar sesión para publicar"); navigate("/auth"); return; }
     if (!content.trim() && selectedMedia.length === 0) return;
     const { error } = await supabase
       .from('posts')
-      .insert({
-        user_id: user?.id,
-        content,
-        post_type: 'post',
-      });
+      .insert({ user_id: user?.id, content, post_type: 'post', });
     if (error) {
       toast.error("Error al publicar");
     } else {
@@ -124,19 +104,10 @@ export default function GlobalWall() {
     }
   };
 
-  const handleResonance = async (postId: string) => {
-    if (!isAuthenticated) {
-      toast.error("Debes iniciar sesión");
-      navigate("/auth");
-      return;
-    }
+  const handleResonance = async (postId) => {
+    if (!isAuthenticated) { toast.error("Debes iniciar sesión"); navigate("/auth"); return; }
     const { error } = await supabase
-      .from('resonances')
-      .insert({
-        user_id: user?.id,
-        post_id: postId,
-        emotion: 'resonance',
-      });
+      .from('resonances').insert({ user_id: user?.id, post_id: postId, emotion: 'resonance', });
     if (error && error.code !== '23505') {
       toast.error("Error al resonar");
     } else {
@@ -144,218 +115,229 @@ export default function GlobalWall() {
     }
   };
 
-  // Hero Section, con Isabella AI y efectos sensoriales matrix-quantum
-  const HeroSection = () => (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
-    >
-      <canvas ref={canvasRef} className="absolute inset-0 -z-10" />
-
-      <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/80 to-background -z-10 pointer-events-none" />
-      <div className="max-w-6xl mx-auto text-center space-y-8 px-4 z-10">
-        {/* Badge + Logo holographic */}
-        <motion.div
-          initial={{ y: -22, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.22 }}
-          className="inline-flex items-center gap-4 px-10 py-5 crystal-glass rounded-full shadow-glow-quantum"
-        >
-          <Sparkles className="w-7 h-7 text-primary-glow animate-pulse-fast" />
-          <span className="text-lg font-orbitron text-foreground tracking-wide">TAMV MD-X4™ Universe</span>
-          <Badge className="bg-gradient-quantum text-white shadow-glow-quantum">Metaverso TAMV MD-X4</Badge>
-        </motion.div>
-        {/* Main Title */}
-        <motion.h1
-          initial={{ y: 26, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.42 }}
-          className="text-8xl md:text-[8.5vw] font-orbitron font-black tracking-tight leading-tight gradient-quantum-hero"
-        >
-          <span className="gradient-text-quantum animate-glow">Metaverso</span>
-          <br />
-          <span className="gradient-text-dream animate-crystal">TAMV MD-X4™</span>
-        </motion.h1>
-        {/* Isabella AI Avatar */}
-        <Suspense fallback={null}>
-          {isabellaActive && (
-            <IsabellaAI onClose={() => setIsabellaActive(false)} />
-          )}
-        </Suspense>
-        {/* Subtitle */}
-        <motion.p
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.62 }}
-          className="text-2xl md:text-4xl text-muted-foreground mx-auto max-w-3xl font-inter mt-7 tracking-normal bg-gradient-to-r from-primary/80 to-accent/70 bg-clip-text text-transparent"
-        >
-          Tu ecosistema de presencia <span className="font-bold text-primary-glow">Sensitiva 4D</span>, construcción colectiva, IA <span className="font-bold text-secondary-glow">consciente y elegante</span>, economía ética y comunidad universal.
-        </motion.p>
-        {/* Action Buttons */}
-        <motion.div
-          initial={{ y: 16, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.85 }}
-          className="flex flex-col sm:flex-row gap-5 justify-center pt-7"
-        >
-          <Button
-            onClick={() => isAuthenticated ? setShowHero(false) : navigate("/auth")}
-            size="lg"
-            className="group px-14 py-8 text-2xl font-orbitron bg-gradient-quantum hover:shadow-glow transition-all hover:scale-110"
-          >
-            {isAuthenticated ? "Entrar al Quantum Wall" : "Activar QuantumID™"}
-            <Zap className="w-7 h-7 group-hover:rotate-12 transition-transform ml-2" />
-          </Button>
-          {!isAuthenticated && (
-            <Button
-              onClick={() => setShowHero(false)}
-              size="lg"
-              variant="outline"
-              className="px-14 py-8 text-2xl font-orbitron border-primary/60 hover:border-primary hover:bg-primary/10"
-            >
-              Explorar
-              <Globe className="w-7 h-7 ml-2" />
-            </Button>
-          )}
-        </motion.div>
-        {/* Features */}
-        <motion.div
-          initial={{ y: 18, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 1.12 }}
-          className="flex flex-wrap gap-6 justify-center pt-18"
-        >
-          {[
-            { icon: Brain, text: "ISABELLA AI™", color: "text-primary-glow", desc: "Guía Quantum Sensitiva" },
-            { icon: Orbit, text: "Metaverso TAMV™", color: "text-secondary-glow", desc: "Presencia 3D-4D" },
-            { icon: Shield, text: "Anubis Sentinel™", color: "text-accent-glow", desc: "Seguridad Quantum" },
-            { icon: Bot, text: "Companions XR", color: "text-accent", desc: "Asistentes y Bots" },
-          ].map((feature, i) => (
-            <motion.div
-              key={i}
-              whileHover={{ scale: 1.09, y: -14 }}
-              className="crystal-glass px-10 py-6 rounded-3xl flex flex-col items-center gap-2 hover:shadow-quantum transition-all cursor-pointer"
-            >
-              <feature.icon className={`w-9 h-9 mb-2 ${feature.color}`} />
-              <span className="text-lg font-orbitron font-bold">{feature.text}</span>
-              <span className="text-xs text-muted-foreground">{feature.desc}</span>
-            </motion.div>
-          ))}
-        </motion.div>
+  // Barra superior
+  const TopBar = () => (
+    <div className="fixed top-0 left-0 w-full z-40 bg-gradient-to-r from-black/70 via-primary/10 to-black/70 backdrop-blur-xl shadow-2xl border-b border-white/10 flex justify-between items-center px-8 h-20 glassmorph-glow">
+      <div className="font-orbitron text-2xl tracking-wider text-resonance-glow drop-shadow font-bold">TAMV MD-X4™</div>
+      <div className="flex gap-4 items-center">
+        <Button variant="ghost" onClick={() => navigate('/university')}><GraduationCap className="w-5 h-5" /> Tamv University</Button>
+        <Button variant="ghost" onClick={() => navigate('/marketplace')}><ShoppingCart className="w-5 h-5" /> Marketplace</Button>
+        <Button variant="ghost" onClick={() => navigate('/music')}><Music className="w-5 h-5" /> Música</Button>
+        <Button variant="ghost" onClick={() => navigate('/dreamspaces')}><Radio className="w-5 h-5" /> DreamSpaces</Button>
+        <Button variant="ghost" onClick={() => navigate('/store')}><Store className="w-5 h-5" /> Store</Button>
       </div>
-    </motion.div>
+      <Avatar className="border-2 border-accent-glow">
+        <AvatarImage src={user?.avatar_url} />
+        <AvatarFallback>{user?.username?.[0]?.toUpperCase() ?? "U"}</AvatarFallback>
+      </Avatar>
+    </div>
+  );
+
+  // Barra lateral
+  const SideBar = () => {
+    const [open, setOpen] = useState(false);
+    return (
+      <motion.div
+        className={`fixed left-0 top-20 z-30 h-[80vh] flex flex-col bg-gradient-to-br from-black/40 to-primary/20
+        backdrop-blur-lg p-1 rounded-r-3xl overflow-hidden shadow-2xl`}
+        initial={{ x: -80 }} animate={{ x: open ? 0 : -80 }} transition={{ type: "spring", stiffness: 160 }}
+        onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}
+      >
+        <Button variant="ghost" size="icon" className="mb-4 mt-2" onClick={() => setOpen(!open)}>
+          <Layers className="transition-transform" />
+        </Button>
+        {open && (
+          <div className="flex flex-col gap-4 transition-all">
+            <Button variant="ghost" onClick={() => navigate('/wall')}><Globe /> Global Wall</Button>
+            <Button variant="ghost" onClick={() => navigate('/groups')}><Users /> Canales/Grupos</Button>
+            <Button variant="ghost" onClick={() => navigate('/chats')}><Bot /> Chats IA</Button>
+            <Button variant="ghost" onClick={() => navigate('/calls')}><Cpu /> VideoLlamadas</Button>
+            <Button variant="ghost" onClick={() => navigate('/dreamspaces')}><Radio /> DreamSpaces</Button>
+          </div>
+        )}
+      </motion.div>
+    );
+  };
+
+  // Barra central de herramientas
+  const CentralBar = () => (
+    <div className="w-full glassmorph-glow rounded-xl py-3 px-4 mt-4 mx-auto flex flex-wrap gap-3 items-center justify-center border-b border-t border-cyan-900/60">
+      <Button variant="ghost" onClick={() => navigate('/groups')}><Users /> Grupos</Button>
+      <Button variant="ghost" onClick={() => navigate('/channels')}><Network /> Canales</Button>
+      <Button variant="ghost" onClick={() => navigate('/chats')}><Bot /> Chats</Button>
+      <Button variant="ghost" onClick={() => navigate('/calls')}><Cpu /> Videollamadas</Button>
+      <Button variant="ghost" onClick={() => navigate('/music')}><Music /> Música</Button>
+      <Button variant="ghost" onClick={() => navigate('/concerts')}><Radio /> Conciertos</Button>
+      <Button variant="ghost" onClick={() => navigate('/dreamspaces')}><Radio /> DreamSpaces</Button>
+    </div>
+  );
+
+  // Videoteca principal (hero y dos filas de videos)
+  const VideoGrid = () => (
+    <div className="w-full flex flex-col items-center mt-36 gap-10">
+      <div className="w-full rounded-3xl overflow-hidden shadow-lg bg-gradient-to-br from-accent-glow/30 to-black/80 border-4 border-primary max-w-5xl mx-auto animate-glow">
+        <video src="/main-hero.mp4" autoPlay loop muted controls className="w-full aspect-video object-cover" />
+      </div>
+      {[0, 1].map(row =>
+        <div key={row} className="grid grid-cols-5 gap-6 w-full max-w-5xl mx-auto">
+          {[...Array(5)].map((_, col) =>
+            <video key={col} src={`/wall-videos/${row * 5 + col}.mp4`} loop muted controls
+              className="rounded-xl glassmorph-glow object-cover w-full h-[180px] hover:scale-105 transition" />
+          )}
+        </div>
+      )}
+    </div>
+  );
+
+  const MusicSection = () => (
+    <div className="max-w-6xl mx-auto mt-14 mb-10 p-6 glass-effect shadow-lg rounded-3xl">
+      <div className="text-2xl font-orbitron font-bold mb-3 text-secondary-glow">Música Sensitiva</div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-7">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="bg-gradient-to-br from-purple-900 to-black rounded-xl p-5 flex flex-col gap-2 items-center">
+            <Music className="w-9 h-9 text-cyan-400" />
+            <div className="font-semibold text-white">Track #{i + 1}</div>
+            <audio src={`/music/track${i + 1}.mp3`} controls className="w-full" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  const MarketplaceSection = () => (
+    <div className="max-w-6xl mx-auto mt-16 space-y-10">
+      <div className="flex flex-wrap gap-6 justify-center">
+        <Card className="w-80 bg-gradient-to-br from-cyan-950/80 to-black/80 hover:shadow-glow">
+          <div className="font-orbitron text-xl mb-3 text-center text-accent">Membresías</div>
+          <ul className="flex flex-col gap-2">
+            {['Free', 'Premium', 'VIP', 'Elite', 'Celestial'].map((level, idx) => (
+              <li key={level} className={`flex justify-between font-bold ${idx % 2 ? 'text-yellow-400' : 'text-slate-200'} py-1 px-2`}>
+                {level} <span>Desde ${idx * 199 + 0} MXN</span>
+              </li>
+            ))}
+          </ul>
+          <Button className="mt-6 w-full" onClick={() => navigate('/shop')}>Ver Tienda</Button>
+        </Card>
+        <Card className="w-96 bg-gradient-to-br from-purple-950/90 to-black hover:shadow-glow px-7 py-10">
+          <div className="font-orbitron text-lg mb-2 text-resonance">Marketplace Digital</div>
+          <p className="text-xs text-muted-foreground">Adquiere assets XR, skins, cursos, conciertos, regalos, NFTs, upgrades.</p>
+          <Button variant="outline" className="mt-7 w-full border-purple-400" onClick={() => navigate('/marketplace')}>Entrar Marketplace</Button>
+        </Card>
+      </div>
+    </div>
+  );
+
+  const DreamSpaces = () => (
+    <div className="max-w-6xl mx-auto mt-14 p-7 rounded-2xl glass-effect border border-cyan-600/40 shadow-sm">
+      <div className="font-orbitron text-xl font-bold text-primary-glow mb-2">DreamSpaces XR</div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="bg-gradient-to-br from-cyan-900 to-black p-5 rounded-xl flex flex-col gap-2">
+            <Radio className="w-7 h-7 text-accent" />
+            <div className="font-semibold text-white">DreamSpace #{i + 1}</div>
+            <Button size="sm" className="w-full mt-2" onClick={() => navigate(`/dreamspaces/${i + 1}`)}>Explorar</Button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  const UniversitySection = () => (
+    <div className="max-w-6xl mx-auto mt-14 mb-20 p-7 glass-effect rounded-3xl">
+      <div className="font-orbitron text-xl text-primary font-bold mb-2">TAMV University</div>
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="bg-gradient-to-br from-purple-700/50 to-black p-6 rounded-xl">
+            <GraduationCap className="w-8 h-8 text-accent mb-2" />
+            <div className="font-semibold text-white">Curso #{i + 1}</div>
+            <Button size="sm" className="w-full mt-2">Ir al Curso</Button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  // Feed social TAMV posts
+  const FeedSection = () => (
+    <div className="max-w-5xl mx-auto mt-8 space-y-8">
+      {isAuthenticated && (
+        <Card className="glass-effect p-6 glow-quantum mb-8">
+          <Textarea
+            placeholder="Comparte tu experiencia quantum..."
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className="bg-card border-primary/30 min-h-[120px] resize-none"
+          />
+          <div className="flex justify-between items-center mt-4">
+            <div className="flex gap-2">
+              <Button variant="ghost" size="icon"><ImageIcon className="w-5 h-5" /></Button>
+              <Button variant="ghost" size="icon"><Video className="w-5 h-5" /></Button>
+              <Button variant="ghost" size="icon"><Mic className="w-5 h-5" /></Button>
+              <Button variant="ghost" size="icon"><Upload className="w-5 h-5" /></Button>
+            </div>
+            <Button onClick={createPost} className="bg-gradient-quantum">
+              <Sparkles className="w-4 h-4 mr-2" /> Publicar
+            </Button>
+          </div>
+        </Card>
+      )}
+      <div className="space-y-6">
+        {posts.map((post) => (
+          <motion.div key={post.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}>
+            <Card className="glass-effect p-6 hover:glow-quantum transition-all">
+              <div className="flex items-start gap-4">
+                <Avatar className="border-2 border-primary/30">
+                  <AvatarImage src={post.profiles?.avatar_url} />
+                  <AvatarFallback className="bg-primary/20">{post.profiles?.username?.[0]?.toUpperCase()}</AvatarFallback>
+                </Avatar>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="font-orbitron font-bold">{post.profiles?.username}</span>
+                    {post.profiles?.verified && (
+                      <Badge className="bg-gradient-quantum text-white">✓</Badge>
+                    )}
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-4">{new Date(post.created_at).toLocaleDateString()}</p>
+                  <p className="text-foreground whitespace-pre-wrap">{post.content}</p>
+
+                  <div className="flex gap-6 mt-4 pt-4 border-t border-primary/20">
+                    <Button variant="ghost" size="sm"
+                      onClick={() => handleResonance(post.id)}
+                      className="text-resonance hover:text-resonance/80">
+                      <Heart className="w-4 h-4 mr-1" /> {post.resonance_count || 0}
+                    </Button>
+                    <Button variant="ghost" size="sm" className="text-secondary">
+                      <MessageCircle className="w-4 h-4 mr-1" /> {post.comments_count || 0}
+                    </Button>
+                    <Button variant="ghost" size="sm" className="text-accent">
+                      <Share2 className="w-4 h-4 mr-1" /> {post.shares_count || 0}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </motion.div>
+        ))}
+      </div>
+    </div>
   );
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Quantum Matrix Animated Background */}
-      <div className="fixed inset-0 -z-10 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/11 via-background to-secondary/6" />
-        {[1,2,3].map((i) => (
-          <div
-            key={i}
-            className={`absolute top-${i * 14} left-${i * 12} w-[380px] h-[380px] bg-primary/25 rounded-full blur-[128px] animate-pulse-slower`}
-            style={{ animationDelay: `${i * 1.2}s` }}
-          />
-        ))}
+    <div className="min-h-screen bg-black/95 relative">
+      <TopBar />
+      <SideBar />
+      <div className="pt-28 pb-10 px-2">
+        <VideoGrid />
+        <CentralBar />
+        <MusicSection />
+        <DreamSpaces />
+        <UniversitySection />
+        <MarketplaceSection />
+        <FeedSection />
       </div>
-      <AnimatePresence mode="wait">
-        {showHero ? (
-          <HeroSection key="hero" />
-        ) : (
-          <motion.div
-            key="wall"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="relative z-10"
-          >
-              {isAuthenticated && <Navigation currentView="wall" onNavigate={(view) => {}} />}
-              <div className={`max-w-5xl mx-auto space-y-8 ${isAuthenticated ? 'pt-32 p-8' : 'pt-20 p-8'}`}>
-                {/* Create Post Card */}
-                {isAuthenticated && (
-                  <Card className="glass-effect p-6 glow-quantum">
-                    <Textarea
-                      placeholder="✨ Comparte tu experiencia quantum..."
-                      value={content}
-                      onChange={(e) => setContent(e.target.value)}
-                      className="bg-card border-primary/30 min-h-[120px] resize-none"
-                    />
-                    <div className="flex justify-between items-center mt-4">
-                      <div className="flex gap-2">
-                        <Button variant="ghost" size="icon"><ImageIcon className="w-5 h-5" /></Button>
-                        <Button variant="ghost" size="icon"><Video className="w-5 h-5" /></Button>
-                        <Button variant="ghost" size="icon"><Mic className="w-5 h-5" /></Button>
-                        <Button variant="ghost" size="icon"><Upload className="w-5 h-5" /></Button>
-                      </div>
-                      <Button onClick={createPost} className="bg-gradient-quantum">
-                        <Sparkles className="w-4 h-4 mr-2" />
-                        Publicar
-                      </Button>
-                    </div>
-                  </Card>
-                )}
-
-                {/* Posts Feed */}
-                <div className="space-y-6">
-                  {posts.map((post) => (
-                    <motion.div
-                      key={post.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.4 }}
-                    >
-                      <Card className="glass-effect p-6 hover:glow-quantum transition-all">
-                        <div className="flex items-start gap-4">
-                          <Avatar className="border-2 border-primary/30">
-                            <AvatarImage src={post.profiles?.avatar_url} />
-                            <AvatarFallback className="bg-primary/20">
-                              {post.profiles?.username?.[0]?.toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <span className="font-orbitron font-bold">{post.profiles?.username}</span>
-                              {post.profiles?.verified && (
-                                <Badge className="bg-gradient-quantum text-white">✓</Badge>
-                              )}
-                            </div>
-                            <p className="text-sm text-muted-foreground mb-4">
-                              {new Date(post.created_at).toLocaleDateString()}
-                            </p>
-                            <p className="text-foreground whitespace-pre-wrap">{post.content}</p>
-                            
-                            <div className="flex gap-6 mt-4 pt-4 border-t border-primary/20">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleResonance(post.id)}
-                                className="text-resonance hover:text-resonance/80"
-                              >
-                                <Heart className="w-4 h-4 mr-1" />
-                                {post.resonance_count || 0}
-                              </Button>
-                              <Button variant="ghost" size="sm" className="text-secondary">
-                                <MessageCircle className="w-4 h-4 mr-1" />
-                                {post.comments_count || 0}
-                              </Button>
-                              <Button variant="ghost" size="sm" className="text-accent">
-                                <Share2 className="w-4 h-4 mr-1" />
-                                {post.shares_count || 0}
-                              </Button>
-                            </div>
-                          </div>
-                        </div>
-                      </Card>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
