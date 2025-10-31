@@ -1,16 +1,38 @@
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useState, useEffect, useCallback } from "react";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls, Html, useProgress } from "@react-three/drei";
+import { motion, AnimatePresence } from "framer-motion";
+import { Card, Button } from "@/components/ui";
 import { Sparkles, Plus, Eye, Users } from "lucide-react";
-// Puedes importar Onboarding, IsabellaPanel, XRControls si quieres modularidad interactiva
+import * as THREE from "three";
 
-const spaces = [
+const baseTemplates = [
+  { id: "cyberpunk", name: "Cyberpunk City", desc: "Neones y hologramas" },
+  { id: "zen_garden", name: "Zen Garden", desc: "Entorno natural y sereno" },
+  { id: "space_station", name: "Estación Espacial", desc: "Ambiente futurista" },
+];
+
+// Indicador de carga para modelos 3D
+function Loader() {
+  const { progress } = useProgress();
+  return <Html center>{progress.toFixed(0)}% cargando...</Html>;
+}
+
+// Modelo 3D cargado con react-three-fiber (puedes importar GLTFLoader de three)
+function ModelPreview({ url }: { url: string }) {
+  const gltf = useLoader(THREE.GLTFLoader, url);
+  return <primitive object={gltf.scene} scale={2} position={[0, -0.5, 0]} />;
+}
+
+const dreamSpacesData = [
   {
     id: 1,
     title: "Quantum Gallery",
-    description: "Galería de arte 3D con resonancia emocional",
+    description: "Galería 3D con resonancia emocional",
     gradient: "from-primary via-purple-500 to-pink-500",
     views: "1.2K",
     resonance: 94,
+    modelUrl: "/models/gallery.glb"
   },
   {
     id: 2,
@@ -19,108 +41,142 @@ const spaces = [
     gradient: "from-secondary via-cyan-400 to-blue-500",
     views: "3.5K",
     resonance: 87,
+    modelUrl: "/models/cyberpunk.glb"
   },
-  {
-    id: 3,
-    title: "Golden Sanctuary",
-    description: "Templo digital de meditación colectiva",
-    gradient: "from-accent via-yellow-400 to-orange-500",
-    views: "890",
-    resonance: 96,
-  },
-  {
-    id: 4,
-    title: "Aurora Borealis",
-    description: "Entorno natural con física cuántica",
-    gradient: "from-calm via-blue-400 to-green-400",
-    views: "2.1K",
-    resonance: 91,
-  },
-  {
-    id: 5,
-    title: "Cosmic Concert",
-    description: "Sala de streaming con audio 3D KAOS™",
-    gradient: "from-energy via-orange-400 to-red-500",
-    views: "5.8K",
-    resonance: 98,
-  },
-  {
-    id: 6,
-    title: "Crystal Palace",
-    description: "Universidad TAMV™ ambiente inmersivo",
-    gradient: "from-resonance via-pink-400 to-purple-500",
-    views: "4.2K",
-    resonance: 89,
-  },
+  // Agrega más espacios...
 ];
 
-export const DreamSpaces = () => (
-  <main className="min-h-screen pt-24 px-4 pb-12">
-    <section className="max-w-7xl mx-auto space-y-8">
-      {/* Header + Isabella Panel */}
-      <header className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div className="space-y-2">
-          <h1 className="text-4xl md:text-5xl font-orbitron font-bold text-gradient-dream">DreamSpaces™</h1>
-          <p className="text-muted-foreground text-lg">
-            Espacios XR 3D/4D reactivos con trazabilidad emocional
+export default function DreamSpacesHybrid() {
+  const [selectedSpace, setSelectedSpace] = useState<number | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState(baseTemplates[0].id);
+  const [showNewModal, setShowNewModal] = useState(false);
+
+  const createNewSpace = useCallback(() => {
+    // Aquí lógica híbrida cuántica/clásica para crear nuevo dreamspace
+    alert(`[translate:Creando nuevo DreamSpace con plantilla:] ${selectedTemplate}`);
+    setShowNewModal(false);
+  }, [selectedTemplate]);
+
+  return (
+    <main className="min-h-screen pt-24 pb-12 px-6 bg-gradient-to-tr from-[#101020] via-[#251f3f] to-[#100c1f]">
+      <header className="mb-12 flex flex-col md:flex-row justify-between items-center gap-6">
+        <div className="text-white">
+          <h1 className="text-5xl font-orbitron font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-600">
+            DreamSpaces - Arquitectura Híbrida Cuántica-Clásica
+          </h1>
+          <p className="mt-2 text-lg max-w-lg text-muted-foreground">
+            Crea y explora entornos multisensoriales 3D/4D con trazabilidad emocional y mega-microservicios híbridos.
           </p>
         </div>
-        {/* Onboarding Isabella AI (modular, opcional) */}
-        {/* <IsabellaPanel /> */}
-        <Button className="bg-gradient-quantum hover:shadow-glow group">
-          <Plus className="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform" />
-          Crear DreamSpace
+        <Button onClick={() => setShowNewModal(true)} className="px-6 py-4 bg-gradient-quantum flex items-center gap-3">
+          <Plus className="w-6 h-6" /> Nuevo DreamSpace
         </Button>
       </header>
-      {/* Spaces Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {spaces.map(s => (
-          <Card key={s.id} className="glass-effect hover:shadow-glow group cursor-pointer transition-all hover:scale-105">
-            <div className={`h-48 bg-gradient-to-br ${s.gradient} relative`}>
-              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Sparkles className="w-16 h-16 text-white/80 animate-float" />
-              </div>
-              <div className="absolute top-3 right-3 glass-effect px-3 py-1 rounded-full flex items-center gap-2">
-                <Eye className="w-4 h-4 text-white" />
-                <span className="text-sm font-orbitron text-white">{s.views}</span>
+
+      {/* Grid de DreamSpaces */}
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-10">
+        {dreamSpacesData.map((space) => (
+          <motion.div 
+            key={space.id}
+            className={`glass-effect rounded-3xl shadow-quantum cursor-pointer overflow-hidden border border-primary/20`}
+            whileHover={{ scale: 1.05 }}
+            onClick={() => setSelectedSpace(space.id)}
+          >
+            <div className={`h-56 bg-gradient-to-br ${space.gradient} relative`}>
+              {selectedSpace === space.id ? (
+                <Canvas camera={{ position: [3, 3, 3], fov: 50 }}>
+                  <ambientLight intensity={0.7} />
+                  <directionalLight position={[5, 5, 5]} />
+                  <React.Suspense fallback={<Loader />}>
+                    <ModelPreview url={space.modelUrl} />
+                    <OrbitControls enableZoom enableRotate />
+                  </React.Suspense>
+                </Canvas>
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center opacity-60 text-white text-2xl font-orbitron select-none">
+                  {space.title}
+                </div>
+              )}
+              <div className="absolute top-3 right-3 glass-effect px-3 py-1 rounded-full flex items-center gap-1">
+                <Eye className="w-4 h-4" />
+                <span className="text-white text-sm font-orbitron">{space.views}</span>
               </div>
             </div>
-            <div className="p-6 space-y-4">
-              <h3 className="text-xl font-orbitron font-bold text-foreground mb-2">{s.title}</h3>
-              <p className="text-sm text-muted-foreground">{s.description}</p>
+            <div className="p-6 space-y-3">
+              <h3 className="text-xl font-orbitron font-bold text-foreground">{space.title}</h3>
+              <p className="text-muted-foreground text-sm">{space.description}</p>
               <div>
-                <div className="flex justify-between text-sm mb-1">
+                <div className="flex justify-between mb-1 text-sm">
                   <span className="font-orbitron">Resonancia</span>
-                  <span className="text-primary-glow">{s.resonance}%</span>
+                  <span className="text-primary-glow">{space.resonance}%</span>
                 </div>
                 <div className="h-2 bg-border rounded-full">
-                  <div className={`h-full bg-gradient-to-r ${s.gradient}`} style={{ width: `${s.resonance}%` }} />
+                  <div className={`h-full rounded-full bg-gradient-to-r ${space.gradient}`} style={{ width: `${space.resonance}%` }} />
                 </div>
               </div>
-              <div className="flex gap-2 pt-2">
-                <Button variant="outline" className="flex-1 group border-border hover:border-primary">
-                  <Eye className="w-4 h-4 mr-2 group-hover:text-primary" /> Explorar
+              <div className="flex gap-3 pt-3">
+                <Button variant="outline" className="flex-1 border-border hover:border-primary">
+                  <Eye className="w-4 h-4 mr-2" /> Explorar
                 </Button>
                 <Button variant="outline" className="border-border hover:border-secondary">
                   <Users className="w-4 h-4" />
                 </Button>
               </div>
             </div>
-          </Card>
+          </motion.div>
         ))}
-      </div>
-      {/* Featured Section */}
-      <Card className="glass-effect p-8 text-center">
-        <Sparkles className="w-16 h-16 mx-auto mb-4 text-primary-glow animate-pulse" />
-        <h2 className="text-2xl font-orbitron font-bold text-gradient-quantum mb-2">Crea tu Primer DreamSpace</h2>
-        <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-          Diseña entornos XR únicos con HyperRender™ y activa experiencias multisensoriales con KAOS Audio™ integrado
-        </p>
-        <Button className="bg-gradient-dream hover:shadow-glow">
-          <Plus className="w-5 h-5 mr-2" /> Empezar Ahora
-        </Button>
-      </Card>
-    </section>
-  </main>
-);
+      </section>
+
+      {/* Modal creación nuevo DreamSpace */}
+      <AnimatePresence>
+        {showNewModal && (
+          <motion.div
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm flex justify-center items-center z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowNewModal(false)}
+          >
+            <motion.div
+              className="bg-background rounded-3xl p-10 max-w-xl w-full shadow-quantum"
+              initial={{ y: 100 }}
+              animate={{ y: 0 }}
+              exit={{ y: 100 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h2 className="font-orbitron text-3xl mb-6 text-primary-glow">Crear Nuevo DreamSpace</h2>
+              <p className="mb-4 text-muted-foreground">Selecciona una plantilla base para iniciar.</p>
+              {baseTemplates.map((tpl) => (
+                <label key={tpl.id} className="block mb-3 cursor-pointer group">
+                  <input
+                    type="radio"
+                    name="template"
+                    value={tpl.id}
+                    checked={selectedTemplate === tpl.id}
+                    onChange={() => setSelectedTemplate(tpl.id)}
+                    className="hidden"
+                  />
+                  <div className="bg-primary/10 group-hover:bg-primary/20 rounded-lg p-4 flex items-center gap-4">
+                    <Sparkles className="w-6 h-6 text-accent-glow" />
+                    <div>
+                      <div className="font-orbitron font-bold text-foreground">{tpl.name}</div>
+                      <p className="text-muted-foreground text-sm">{tpl.desc}</p>
+                    </div>
+                  </div>
+                </label>
+              ))}
+              <div className="mt-8 flex justify-end gap-4">
+                <Button variant="outline" onClick={() => setShowNewModal(false)}>
+                  Cancelar
+                </Button>
+                <Button className="bg-gradient-quantum" onClick={createNewSpace}>
+                  Crear
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </main>
+  );
+}
