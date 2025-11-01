@@ -1,10 +1,10 @@
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Html, useProgress } from "@react-three/drei";
 import { motion, AnimatePresence } from "framer-motion";
-import { Card, Button } from "@/components/ui";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Sparkles, Plus, Eye, Users } from "lucide-react";
-import * as THREE from "three";
 
 const baseTemplates = [
   { id: "cyberpunk", name: "Cyberpunk City", desc: "Neones y hologramas" },
@@ -12,16 +12,9 @@ const baseTemplates = [
   { id: "space_station", name: "Estación Espacial", desc: "Ambiente futurista" },
 ];
 
-// Indicador de carga para modelos 3D
 function Loader() {
   const { progress } = useProgress();
   return <Html center>{progress.toFixed(0)}% cargando...</Html>;
-}
-
-// Modelo 3D cargado con react-three-fiber (puedes importar GLTFLoader de three)
-function ModelPreview({ url }: { url: string }) {
-  const gltf = useLoader(THREE.GLTFLoader, url);
-  return <primitive object={gltf.scene} scale={2} position={[0, -0.5, 0]} />;
 }
 
 const dreamSpacesData = [
@@ -29,21 +22,18 @@ const dreamSpacesData = [
     id: 1,
     title: "Quantum Gallery",
     description: "Galería 3D con resonancia emocional",
-    gradient: "from-primary via-purple-500 to-pink-500",
+    gradient: "from-primary via-accent to-secondary",
     views: "1.2K",
     resonance: 94,
-    modelUrl: "/models/gallery.glb"
   },
   {
     id: 2,
     title: "Neon Dreams",
     description: "Espacio cyberpunk para eventos virtuales",
-    gradient: "from-secondary via-cyan-400 to-blue-500",
+    gradient: "from-accent via-cyan-400 to-blue-500",
     views: "3.5K",
     resonance: 87,
-    modelUrl: "/models/cyberpunk.glb"
   },
-  // Agrega más espacios...
 ];
 
 export default function DreamSpacesHybrid() {
@@ -52,20 +42,19 @@ export default function DreamSpacesHybrid() {
   const [showNewModal, setShowNewModal] = useState(false);
 
   const createNewSpace = useCallback(() => {
-    // Aquí lógica híbrida cuántica/clásica para crear nuevo dreamspace
-    alert(`[translate:Creando nuevo DreamSpace con plantilla:] ${selectedTemplate}`);
+    alert(`Creando nuevo DreamSpace con plantilla: ${selectedTemplate}`);
     setShowNewModal(false);
   }, [selectedTemplate]);
 
   return (
-    <main className="min-h-screen pt-24 pb-12 px-6 bg-gradient-to-tr from-[#101020] via-[#251f3f] to-[#100c1f]">
+    <main className="min-h-screen pt-24 pb-12 px-6 bg-gradient-to-tr from-background via-primary-dark to-background">
       <header className="mb-12 flex flex-col md:flex-row justify-between items-center gap-6">
-        <div className="text-white">
-          <h1 className="text-5xl font-orbitron font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-600">
+        <div className="text-foreground">
+          <h1 className="text-5xl font-orbitron font-black text-transparent bg-clip-text bg-gradient-quantum">
             DreamSpaces - Arquitectura Híbrida Cuántica-Clásica
           </h1>
           <p className="mt-2 text-lg max-w-lg text-muted-foreground">
-            Crea y explora entornos multisensoriales 3D/4D con trazabilidad emocional y mega-microservicios híbridos.
+            Crea y explora entornos multisensoriales 3D/4D con trazabilidad emocional.
           </p>
         </div>
         <Button onClick={() => setShowNewModal(true)} className="px-6 py-4 bg-gradient-quantum flex items-center gap-3">
@@ -73,30 +62,18 @@ export default function DreamSpacesHybrid() {
         </Button>
       </header>
 
-      {/* Grid de DreamSpaces */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-10">
         {dreamSpacesData.map((space) => (
           <motion.div 
             key={space.id}
-            className={`glass-effect rounded-3xl shadow-quantum cursor-pointer overflow-hidden border border-primary/20`}
+            className="glass-effect rounded-3xl shadow-quantum cursor-pointer overflow-hidden border border-primary/20"
             whileHover={{ scale: 1.05 }}
             onClick={() => setSelectedSpace(space.id)}
           >
-            <div className={`h-56 bg-gradient-to-br ${space.gradient} relative`}>
-              {selectedSpace === space.id ? (
-                <Canvas camera={{ position: [3, 3, 3], fov: 50 }}>
-                  <ambientLight intensity={0.7} />
-                  <directionalLight position={[5, 5, 5]} />
-                  <React.Suspense fallback={<Loader />}>
-                    <ModelPreview url={space.modelUrl} />
-                    <OrbitControls enableZoom enableRotate />
-                  </React.Suspense>
-                </Canvas>
-              ) : (
-                <div className="absolute inset-0 flex items-center justify-center opacity-60 text-white text-2xl font-orbitron select-none">
-                  {space.title}
-                </div>
-              )}
+            <div className={`h-56 bg-gradient-to-br ${space.gradient} relative flex items-center justify-center`}>
+              <div className="absolute inset-0 flex items-center justify-center opacity-60 text-white text-2xl font-orbitron select-none">
+                {space.title}
+              </div>
               <div className="absolute top-3 right-3 glass-effect px-3 py-1 rounded-full flex items-center gap-1">
                 <Eye className="w-4 h-4" />
                 <span className="text-white text-sm font-orbitron">{space.views}</span>
@@ -108,7 +85,7 @@ export default function DreamSpacesHybrid() {
               <div>
                 <div className="flex justify-between mb-1 text-sm">
                   <span className="font-orbitron">Resonancia</span>
-                  <span className="text-primary-glow">{space.resonance}%</span>
+                  <span className="text-accent-glow">{space.resonance}%</span>
                 </div>
                 <div className="h-2 bg-border rounded-full">
                   <div className={`h-full rounded-full bg-gradient-to-r ${space.gradient}`} style={{ width: `${space.resonance}%` }} />
@@ -127,7 +104,6 @@ export default function DreamSpacesHybrid() {
         ))}
       </section>
 
-      {/* Modal creación nuevo DreamSpace */}
       <AnimatePresence>
         {showNewModal && (
           <motion.div
@@ -144,7 +120,7 @@ export default function DreamSpacesHybrid() {
               exit={{ y: 100 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <h2 className="font-orbitron text-3xl mb-6 text-primary-glow">Crear Nuevo DreamSpace</h2>
+              <h2 className="font-orbitron text-3xl mb-6 text-accent-glow">Crear Nuevo DreamSpace</h2>
               <p className="mb-4 text-muted-foreground">Selecciona una plantilla base para iniciar.</p>
               {baseTemplates.map((tpl) => (
                 <label key={tpl.id} className="block mb-3 cursor-pointer group">

@@ -8,7 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, Video, Phone, MoreVertical, Mic, Slash, EyeOff } from "lucide-react";
-import { Menu, MenuContent, MenuItem, MenuTrigger } from "@/components/ui/menu";
+import { Navigation } from "@/components/Navigation";
 
 export default function Chats() {
   const [chats, setChats] = useState<any[]>([]);
@@ -61,7 +61,9 @@ export default function Chats() {
       }, () => fetchMessages(selectedChat.id))
       .subscribe();
 
-    return () => supabase.removeChannel(channel);
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [selectedChat, blockedChats]);
 
   const fetchChats = useCallback(async () => {
@@ -198,22 +200,14 @@ export default function Chats() {
                       {chat.chat_type === "group" ? "Grupo" : chat.chat_type === "hidden" ? "Oculto" : "Chat privado"}
                     </small>
                   </div>
-                  {/* Menu para opciones de gestionar chat */}
-                  <Menu>
-                    <MenuTrigger asChild>
-                      <Button variant="ghost" size="icon" aria-label="Opciones chat">
-                        <MoreVertical className="w-5 h-5" />
-                      </Button>
-                    </MenuTrigger>
-                    <MenuContent align="end" sideOffset={8} className="bg-background border border-primary/30">
-                      <MenuItem onClick={() => toggleHideChat(chat.id)}>
-                        {hiddenChats.has(chat.id) ? "Mostrar Chat" : "Ocultar Chat"}
-                      </MenuItem>
-                      <MenuItem onClick={() => toggleBlockChat(chat.id)}>
-                        {blockedChats.has(chat.id) ? "Desbloquear Chat" : "Bloquear Chat"}
-                      </MenuItem>
-                    </MenuContent>
-                  </Menu>
+                  <div className="flex gap-1">
+                    <Button variant="ghost" size="sm" onClick={() => toggleHideChat(chat.id)}>
+                      {hiddenChats.has(chat.id) ? "Mostrar" : "Ocultar"}
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => toggleBlockChat(chat.id)}>
+                      {blockedChats.has(chat.id) ? "Desbloquear" : "Bloquear"}
+                    </Button>
+                  </div>
                 </motion.div>
               );
             })}

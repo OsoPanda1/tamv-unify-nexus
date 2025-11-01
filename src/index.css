@@ -12,63 +12,63 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Quantum Core Colors */
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
+    /* Deep Black & Navy Metallic - Background */
+    --background: 220 95% 5%;
+    --foreground: 50 15% 92%;
     
-    /* Quantum Purple - Primary Identity */
-    --primary: 270 80% 60%;
+    /* Metallic Navy Blue - Primary Identity */
+    --primary: 220 100% 25%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 270 100% 75%;
-    --primary-dark: 270 60% 40%;
+    --primary-glow: 220 100% 35%;
+    --primary-dark: 230 95% 12%;
     
-    /* Cyan Neon - Secondary Accent */
-    --secondary: 180 100% 50%;
-    --secondary-foreground: 240 10% 3.9%;
-    --secondary-glow: 180 100% 70%;
+    /* Hyper-realistic Silver & Crystal - Secondary */
+    --secondary: 210 20% 75%;
+    --secondary-foreground: 220 95% 5%;
+    --secondary-glow: 200 25% 85%;
     
-    /* Gold Digital - Premium */
-    --accent: 45 100% 60%;
-    --accent-foreground: 240 10% 3.9%;
-    --accent-glow: 45 100% 75%;
+    /* Iridescent Aqua Blue - Accent */
+    --accent: 180 100% 45%;
+    --accent-foreground: 0 0% 100%;
+    --accent-glow: 180 100% 65%;
     
-    /* Surfaces */
-    --card: 240 10% 8%;
-    --card-foreground: 0 0% 98%;
-    --card-glass: 240 10% 12%;
+    /* Surfaces - Glass & Crystal Effects */
+    --card: 220 90% 8%;
+    --card-foreground: 50 15% 92%;
+    --card-glass: 220 80% 10%;
     
-    --popover: 240 10% 8%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 220 90% 8%;
+    --popover-foreground: 50 15% 92%;
     
-    /* Emotional States */
-    --resonance: 320 80% 55%;
-    --calm: 200 60% 50%;
-    --energy: 30 100% 55%;
-    --focus: 250 70% 60%;
+    /* Emotional States - Enhanced Aqua & Blues */
+    --resonance: 180 100% 50%;
+    --calm: 220 100% 40%;
+    --energy: 180 100% 65%;
+    --focus: 210 60% 70%;
     
-    /* System */
-    --muted: 240 5% 25%;
-    --muted-foreground: 240 5% 65%;
+    /* System - Metallic Accents */
+    --muted: 220 10% 25%;
+    --muted-foreground: 210 15% 65%;
     
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
     
-    --border: 240 10% 18%;
-    --input: 240 10% 15%;
-    --ring: 270 80% 60%;
+    --border: 220 50% 18%;
+    --input: 220 80% 12%;
+    --ring: 180 100% 45%;
     
     --radius: 1rem;
     
-    /* Gradients */
-    --gradient-quantum: linear-gradient(135deg, hsl(270 80% 60%), hsl(180 100% 50%));
-    --gradient-gold: linear-gradient(135deg, hsl(45 100% 60%), hsl(30 100% 55%));
-    --gradient-dream: linear-gradient(135deg, hsl(270 100% 75%), hsl(320 80% 55%), hsl(180 100% 70%));
-    --gradient-glass: linear-gradient(135deg, hsla(240 10% 12% / 0.8), hsla(240 10% 8% / 0.6));
+    /* Gradients - TAMV Signature */
+    --gradient-quantum: linear-gradient(135deg, hsl(220 100% 25%), hsl(180 100% 45%), hsl(210 20% 75%));
+    --gradient-gold: linear-gradient(135deg, hsl(50 100% 85%), hsl(180 100% 65%));
+    --gradient-dream: linear-gradient(135deg, hsl(220 100% 35%), hsl(180 100% 50%), hsl(200 25% 85%));
+    --gradient-glass: linear-gradient(135deg, hsla(220 80% 10% / 0.85), hsla(210 70% 8% / 0.6));
     
-    /* Shadows */
-    --shadow-quantum: 0 8px 32px hsla(270 80% 60% / 0.3);
-    --shadow-glow: 0 0 40px hsla(270 100% 75% / 0.4);
-    --shadow-cyber: 0 4px 24px hsla(180 100% 50% / 0.2);
+    /* Shadows - Crystal & Aqua Glow */
+    --shadow-quantum: 0 8px 32px hsla(180 100% 45% / 0.35);
+    --shadow-glow: 0 0 40px hsla(180 100% 65% / 0.5);
+    --shadow-cyber: 0 4px 24px hsla(210 20% 75% / 0.25);
     
     /* Animations */
     --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);

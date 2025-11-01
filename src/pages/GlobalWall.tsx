@@ -1,7 +1,11 @@
 import { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { Button, Textarea, Card, Avatar, AvatarImage, AvatarFallback, Badge } from "@/components/ui";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Card } from "@/components/ui/card";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -9,6 +13,7 @@ import {
   Shield, Bot, Layers, Cpu, Network, Orbit, ShoppingCart, Music, Users, GraduationCap, Gift,
   Store, Radio
 } from "lucide-react";
+import MediaUploader from "@/components/MediaUploader";
 const IsabellaAI = lazy(() => import("@/components/IsabellaAI"));
 
 export default function GlobalWall() {
@@ -17,7 +22,8 @@ export default function GlobalWall() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [content, setContent] = useState("");
   const [posts, setPosts] = useState([]);
-  const [selectedMedia, setSelectedMedia] = useState([]);
+  const [mediaUrls, setMediaUrls] = useState<string[]>([]);
+  const [mediaTypes, setMediaTypes] = useState<string[]>([]);
   const [showHero, setShowHero] = useState(true);
   const [isabellaActive, setIsabellaActive] = useState(true);
   const canvasRef = useRef(null);
@@ -91,15 +97,24 @@ export default function GlobalWall() {
 
   const createPost = async () => {
     if (!isAuthenticated) { toast.error("Debes iniciar sesión para publicar"); navigate("/auth"); return; }
-    if (!content.trim() && selectedMedia.length === 0) return;
+    if (!content.trim() && mediaUrls.length === 0) return;
+    
     const { error } = await supabase
       .from('posts')
-      .insert({ user_id: user?.id, content, post_type: 'post', });
+      .insert({ 
+        user_id: user?.id, 
+        content, 
+        post_type: 'post',
+        media_urls: mediaUrls.length > 0 ? mediaUrls : null,
+        media_types: mediaTypes.length > 0 ? mediaTypes : null
+      });
+    
     if (error) {
       toast.error("Error al publicar");
     } else {
       setContent("");
-      setSelectedMedia([]);
+      setMediaUrls([]);
+      setMediaTypes([]);
       toast.success("✨ Publicado en el Quantum!");
     }
   };
@@ -260,7 +275,7 @@ export default function GlobalWall() {
   // Feed social TAMV posts
   const FeedSection = () => (
     <div className="max-w-5xl mx-auto mt-8 space-y-8">
-      {isAuthenticated && (
+      {isAuthenticated && user && (
         <Card className="glass-effect p-6 glow-quantum mb-8">
           <Textarea
             placeholder="Comparte tu experiencia quantum..."
@@ -268,14 +283,17 @@ export default function GlobalWall() {
             onChange={(e) => setContent(e.target.value)}
             className="bg-card border-primary/30 min-h-[120px] resize-none"
           />
-          <div className="flex justify-between items-center mt-4">
-            <div className="flex gap-2">
-              <Button variant="ghost" size="icon"><ImageIcon className="w-5 h-5" /></Button>
-              <Button variant="ghost" size="icon"><Video className="w-5 h-5" /></Button>
-              <Button variant="ghost" size="icon"><Mic className="w-5 h-5" /></Button>
-              <Button variant="ghost" size="icon"><Upload className="w-5 h-5" /></Button>
-            </div>
-            <Button onClick={createPost} className="bg-gradient-quantum">
+          <div className="mt-4">
+            <MediaUploader 
+              userId={user.id} 
+              onUploadComplete={(urls, types) => {
+                setMediaUrls(urls);
+                setMediaTypes(types);
+              }} 
+            />
+          </div>
+          <div className="flex justify-end mt-4">
+            <Button onClick={createPost} className="bg-gradient-quantum" disabled={!content.trim() && mediaUrls.length === 0}>
               <Sparkles className="w-4 h-4 mr-2" /> Publicar
             </Button>
           </div>
