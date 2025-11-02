@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Navigation } from "@/components/Navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -39,9 +38,7 @@ export default function University() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-primary-dark to-background">
-      <Navigation currentView="wall" onNavigate={(view) => navigate(`/${view}`)} />
-      
-      <div className="max-w-7xl mx-auto pt-32 px-6 pb-20">
+      <div className="max-w-7xl mx-auto px-6 py-8 pb-20">
         {/* Hero Section */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}

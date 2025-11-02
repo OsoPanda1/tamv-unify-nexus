@@ -1,7 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Navigation } from "@/components/Navigation";
 import { 
   ShoppingCart, 
   Sparkles, 
@@ -49,9 +48,7 @@ const products = [
 export default function Marketplace() {
   return (
     <div className="min-h-screen bg-background">
-      <Navigation currentView="wall" onNavigate={() => {}} />
-      
-      <div className="max-w-7xl mx-auto pt-32 px-4 pb-12 space-y-8">
+      <div className="max-w-7xl mx-auto px-4 py-8 pb-12 space-y-8">
         <div className="text-center space-y-2">
           <div className="inline-flex items-center gap-3 px-6 py-3 glass-effect rounded-full glow-quantum mb-4">
             <ShoppingCart className="w-6 h-6 text-accent-glow animate-pulse" />

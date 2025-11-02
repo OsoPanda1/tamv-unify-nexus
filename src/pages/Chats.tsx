@@ -8,7 +8,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, Video, Phone, MoreVertical, Mic, Slash, EyeOff } from "lucide-react";
-import { Navigation } from "@/components/Navigation";
 
 export default function Chats() {
   const [chats, setChats] = useState<any[]>([]);
@@ -146,8 +145,7 @@ export default function Chats() {
 
   return (
     <div className="min-h-screen bg-background selection:bg-primary/60 selection:text-primary-foreground">
-      <Navigation currentView="chats" onNavigate={() => {}} />
-      <div className="flex h-screen pt-20 text-white overflow-hidden">
+      <div className="flex h-screen text-white overflow-hidden">
         {/* Sidebar with Chats */}
         <motion.div initial={{ width: 0 }} animate={{ width: 320 }} exit={{ width: 0 }}
           className="flex flex-col border-r border-primary/20 glass-effect h-full">

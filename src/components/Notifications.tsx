@@ -22,45 +22,54 @@ export default function Notifications() {
     {
       id: '1',
       type: 'resonance',
-      title: 'Nueva resonancia',
-      message: 'A @quantum_dreamer le resonó tu publicación',
-      timestamp: new Date(Date.now() - 300000),
+      title: 'Resonancia Quantum',
+      message: '@quantum_dreamer resonó con tu Dream Space dimensional',
+      timestamp: new Date(Date.now() - 180000),
       read: false,
       icon: Heart
     },
     {
       id: '2',
       type: 'comment',
-      title: 'Nuevo comentario',
-      message: '@phoenix_protocol comentó en tu DreamSpace',
-      timestamp: new Date(Date.now() - 600000),
+      title: 'Interacción Sensorial',
+      message: '@phoenix_protocol activó respuesta emocional en tu experiencia 4D',
+      timestamp: new Date(Date.now() - 420000),
       read: false,
       icon: MessageCircle
     },
     {
       id: '3',
+      type: 'achievement',
+      title: '¡Nivel Quantum Alcanzado!',
+      message: 'Has desbloqueado: Quantum Explorer - Tier III',
+      timestamp: new Date(Date.now() - 900000),
+      read: false,
+      icon: Award
+    },
+    {
+      id: '4',
       type: 'follow',
-      title: 'Nuevo seguidor',
-      message: '@anubis_guardian te está siguiendo',
-      timestamp: new Date(Date.now() - 1200000),
+      title: 'Nueva Conexión Neural',
+      message: '@anubis_sentinel se sincronizó con tu frecuencia quantum',
+      timestamp: new Date(Date.now() - 1800000),
       read: true,
       icon: Users
     },
     {
-      id: '4',
-      type: 'achievement',
-      title: '¡Logro desbloqueado!',
-      message: 'Has alcanzado el nivel Quantum Explorer',
-      timestamp: new Date(Date.now() - 1800000),
-      read: true,
-      icon: Award
-    },
-    {
       id: '5',
       type: 'system',
-      title: 'Isabella AI™',
-      message: 'Tu perfil emocional ha evolucionado positivamente',
+      title: 'ISABELLA AI™ - Análisis Emocional',
+      message: 'Tu perfil sensorial evolucionó +15% en resonancia positiva',
       timestamp: new Date(Date.now() - 3600000),
+      read: true,
+      icon: Sparkles
+    },
+    {
+      id: '6',
+      type: 'system',
+      title: 'Anubis Sentinel™',
+      message: 'Sistema cuántico optimizado - Estabilidad: 99.87%',
+      timestamp: new Date(Date.now() - 7200000),
       read: true,
       icon: Sparkles
     }
@@ -127,16 +136,21 @@ export default function Notifications() {
           >
             <div className="glass-effect rounded-2xl border-2 border-primary/30 shadow-glow overflow-hidden">
               {/* Header */}
-              <div className="p-4 border-b border-primary/20 flex items-center justify-between">
-                <h3 className="font-orbitron font-bold text-foreground">Notificaciones</h3>
+              <div className="p-4 border-b border-primary/20 flex items-center justify-between bg-gradient-to-r from-primary/10 to-secondary/10">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-accent-glow rounded-full animate-pulse" />
+                  <h3 className="font-orbitron font-bold text-gradient-quantum">
+                    Quantum Notifications™
+                  </h3>
+                </div>
                 {unreadCount > 0 && (
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={markAllAsRead}
-                    className="text-xs text-accent-glow hover:text-accent"
+                    className="text-xs text-accent-glow hover:text-accent hover:bg-accent/10"
                   >
-                    Marcar todas como leídas
+                    Resonar Todas
                   </Button>
                 )}
               </div>
@@ -200,9 +214,13 @@ export default function Notifications() {
               </ScrollArea>
 
               {/* Footer */}
-              <div className="p-3 border-t border-primary/20 text-center">
-                <Button variant="ghost" size="sm" className="text-xs text-accent-glow">
-                  Ver todas las notificaciones
+              <div className="p-3 border-t border-primary/20 text-center bg-gradient-to-r from-primary/5 to-secondary/5">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-xs text-accent-glow hover:bg-accent/10 font-orbitron"
+                >
+                  Centro de Resonancias Quantum
                 </Button>
               </div>
             </div>

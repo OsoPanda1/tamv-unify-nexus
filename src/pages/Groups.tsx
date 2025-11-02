@@ -3,7 +3,6 @@
  */
 
 import { useState } from 'react';
-import { Navigation } from '@/components/Navigation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -24,9 +23,7 @@ export default function Groups() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation currentView="wall" onNavigate={() => {}} />
-      
-      <main className="container mx-auto px-4 py-8 mt-20">
+      <main className="container mx-auto px-4 py-8">
         <div className="max-w-7xl mx-auto space-y-8">
           <div className="flex justify-between items-center">
             <div>

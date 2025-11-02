@@ -37,7 +37,7 @@ export default function KnowledgeSystem() {
   const selectedCellData = selectedCell ? repo.cells[selectedCell] : null;
 
   return (
-    <div className="min-h-screen pt-24 px-4 pb-12 bg-background">
+    <div className="min-h-screen px-4 py-8 bg-background">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
         <div className="text-center space-y-2">
