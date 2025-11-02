@@ -14,6 +14,7 @@ import {
   Store, Radio
 } from "lucide-react";
 import MediaUploader from "@/components/MediaUploader";
+import { MediaGallery } from "@/components/MediaGallery";
 import IsabellaVoice from "@/components/IsabellaVoice";
 const IsabellaAI = lazy(() => import("@/components/IsabellaAI"));
 
@@ -323,28 +324,10 @@ export default function GlobalWall() {
                   <p className="text-foreground whitespace-pre-wrap">{post.content}</p>
 
                   {/* Media Display */}
-                  {post.media_urls && post.media_urls.length > 0 && (
-                    <div className="mt-4 grid grid-cols-2 gap-2">
-                      {post.media_urls.map((url: string, idx: number) => {
-                        const type = post.media_types?.[idx] || 'image';
-                        return (
-                          <div key={idx} className="rounded-lg overflow-hidden border border-primary/20">
-                            {type === 'image' && (
-                              <img src={url} alt="Post media" className="w-full h-64 object-cover" />
-                            )}
-                            {type === 'video' && (
-                              <video src={url} controls className="w-full h-64 object-cover" />
-                            )}
-                            {type === 'audio' && (
-                              <div className="p-4 bg-primary/10">
-                                <audio src={url} controls className="w-full" />
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
+                  <MediaGallery 
+                    mediaUrls={post.media_urls} 
+                    mediaTypes={post.media_types}
+                  />
 
                   <div className="flex gap-6 mt-4 pt-4 border-t border-primary/20">
                     <Button variant="ghost" size="sm"
