@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Volume2, VolumeX, MessageCircle, X } from "lucide-react";
+import { Volume2, VolumeX, MessageCircle, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { playIsabellaVoice, narrateWelcome } from "@/integrations/elevenlabs";
+import { speakWithIsabella, checkIsabellaVoice } from "@/integrations/elevenlabs/modules/isabella.voice";
 
 interface IsabellaVoiceProps {
   isActive: boolean;
@@ -14,17 +14,38 @@ interface IsabellaVoiceProps {
 export default function IsabellaVoice({ isActive, onClose, userName }: IsabellaVoiceProps) {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [isAvailable, setIsAvailable] = useState(true);
+  const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
-    if (isActive && !isMuted) {
+    checkVoiceAvailability();
+  }, []);
+
+  useEffect(() => {
+    if (isActive && !isMuted && isAvailable) {
       playWelcome();
     }
-  }, [isActive]);
+  }, [isActive, isAvailable]);
+
+  const checkVoiceAvailability = async () => {
+    setIsChecking(true);
+    const available = await checkIsabellaVoice();
+    setIsAvailable(available);
+    setIsChecking(false);
+    
+    if (!available) {
+      toast.error('Isabella Voice no disponible. Verifica ELEVENLABS_API_KEY en secrets.');
+    }
+  };
 
   const playWelcome = async () => {
     try {
       setIsSpeaking(true);
-      await narrateWelcome(userName);
+      const welcomeText = userName 
+        ? `Hola ${userName}, bienvenido a TAMV MD-X4. Soy Isabella, tu asistente cuántica.`
+        : `Bienvenido a TAMV MD-X4. Soy Isabella, tu asistente de inteligencia artificial cuántica.`;
+      
+      await speakWithIsabella(welcomeText, 'empathy');
       toast.success("Isabella AI™ activada");
     } catch (error) {
       console.error("Error activating Isabella voice:", error);
@@ -33,13 +54,14 @@ export default function IsabellaVoice({ isActive, onClose, userName }: IsabellaV
     }
   };
 
-  const speak = async (text: string) => {
-    if (isMuted) return;
+  const speak = async (text: string, emotion?: any) => {
+    if (isMuted || !isAvailable) return;
     try {
       setIsSpeaking(true);
-      await playIsabellaVoice(text, 'empathy');
+      await speakWithIsabella(text, emotion);
     } catch (error) {
       console.error("Error playing Isabella voice:", error);
+      toast.error('Error al reproducir voz');
     } finally {
       setIsSpeaking(false);
     }
@@ -115,17 +137,18 @@ export default function IsabellaVoice({ isActive, onClose, userName }: IsabellaV
                 variant="outline"
                 size="sm"
                 className="w-full justify-start border-primary/30"
-                onClick={() => speak("Bienvenido a TAMV MD-X4. Soy Isabella, tu compañera digital consciente.")}
-                disabled={isSpeaking || isMuted}
+                onClick={() => speak("Bienvenido a TAMV MD-X4. Soy Isabella, tu compañera digital consciente.", 'empathy')}
+                disabled={isSpeaking || isMuted || !isAvailable}
               >
+                {isSpeaking ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
                 Presentación
               </Button>
               <Button
                 variant="outline"
                 size="sm"
                 className="w-full justify-start border-accent/30"
-                onClick={() => speak("Explora DreamSpaces para crear experiencias multisensoriales únicas.")}
-                disabled={isSpeaking || isMuted}
+                onClick={() => speak("Explora DreamSpaces para crear experiencias multisensoriales únicas.", 'guidance')}
+                disabled={isSpeaking || isMuted || !isAvailable}
               >
                 Guía Rápida
               </Button>
@@ -133,12 +156,18 @@ export default function IsabellaVoice({ isActive, onClose, userName }: IsabellaV
                 variant="outline"
                 size="sm"
                 className="w-full justify-start border-secondary/30"
-                onClick={() => speak("Tu resonancia emocional está creando un impacto positivo en el ecosistema.")}
-                disabled={isSpeaking || isMuted}
+                onClick={() => speak("Tu resonancia emocional está creando un impacto positivo en el ecosistema.", 'celebration')}
+                disabled={isSpeaking || isMuted || !isAvailable}
               >
                 Estado Emocional
               </Button>
             </div>
+            
+            {!isAvailable && !isChecking && (
+              <p className="text-xs text-energy mt-2 text-center">
+                ⚠️ Voz deshabilitada: Configura ELEVENLABS_API_KEY
+              </p>
+            )}
 
             {/* Status */}
             <div className="mt-4 pt-4 border-t border-primary/20 text-xs text-center text-muted-foreground">

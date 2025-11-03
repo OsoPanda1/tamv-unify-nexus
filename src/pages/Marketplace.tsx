@@ -9,6 +9,9 @@ import {
   Star,
   Filter
 } from "lucide-react";
+import { useCart } from "@/hooks/useCart";
+import CartWidget from "@/components/CartWidget";
+import { toast } from "sonner";
 
 const products = [
   {
@@ -46,8 +49,16 @@ const products = [
 ];
 
 export default function Marketplace() {
+  const { addItem } = useCart();
+
+  const handleAddToCart = (product: typeof products[0]) => {
+    addItem(product);
+    toast.success(`${product.name} añadido al carrito`);
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      <CartWidget />
       <div className="max-w-7xl mx-auto px-4 py-8 pb-12 space-y-8">
         <div className="text-center space-y-2">
           <div className="inline-flex items-center gap-3 px-6 py-3 glass-effect rounded-full glow-quantum mb-4">
@@ -119,9 +130,12 @@ export default function Marketplace() {
                   </div>
                 </div>
 
-                <Button className="w-full bg-gradient-quantum hover:shadow-glow">
+                <Button 
+                  className="w-full bg-gradient-quantum hover:shadow-glow"
+                  onClick={() => handleAddToCart(product)}
+                >
                   <ShoppingCart className="w-4 h-4 mr-2" />
-                  Comprar
+                  Añadir al Carrito
                 </Button>
               </div>
             </Card>

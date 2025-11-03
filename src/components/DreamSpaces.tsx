@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Plus, Eye, Users } from "lucide-react";
+import DreamSpaceViewer from "./DreamSpaceViewer";
 
 const baseTemplates = [
   { id: "cyberpunk", name: "Cyberpunk City", desc: "Neones y hologramas" },
@@ -40,6 +41,7 @@ export default function DreamSpacesHybrid() {
   const [selectedSpace, setSelectedSpace] = useState<number | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState(baseTemplates[0].id);
   const [showNewModal, setShowNewModal] = useState(false);
+  const [viewingSpace, setViewingSpace] = useState<{ type: string; data: any } | null>(null);
 
   const createNewSpace = useCallback(() => {
     alert(`Creando nuevo DreamSpace con plantilla: ${selectedTemplate}`);
@@ -47,7 +49,16 @@ export default function DreamSpacesHybrid() {
   }, [selectedTemplate]);
 
   return (
-    <main className="min-h-screen pt-24 pb-12 px-6 bg-gradient-to-tr from-background via-primary-dark to-background">
+    <>
+      {viewingSpace && (
+        <DreamSpaceViewer
+          spaceType={viewingSpace.type}
+          sceneData={viewingSpace.data}
+          onClose={() => setViewingSpace(null)}
+        />
+      )}
+      
+      <main className="min-h-screen pt-24 pb-12 px-6 bg-gradient-to-tr from-background via-primary-dark to-background">
       <header className="mb-12 flex flex-col md:flex-row justify-between items-center gap-6">
         <div className="text-foreground">
           <h1 className="text-5xl font-orbitron font-black text-transparent bg-clip-text bg-gradient-quantum">
@@ -68,7 +79,7 @@ export default function DreamSpacesHybrid() {
             key={space.id}
             className="glass-effect rounded-3xl shadow-quantum cursor-pointer overflow-hidden border border-primary/20"
             whileHover={{ scale: 1.05 }}
-            onClick={() => setSelectedSpace(space.id)}
+            onClick={() => setViewingSpace({ type: space.title, data: {} })}
           >
             <div className={`h-56 bg-gradient-to-br ${space.gradient} relative flex items-center justify-center`}>
               <div className="absolute inset-0 flex items-center justify-center opacity-60 text-white text-2xl font-orbitron select-none">
@@ -153,6 +164,7 @@ export default function DreamSpacesHybrid() {
           </motion.div>
         )}
       </AnimatePresence>
-    </main>
+      </main>
+    </>
   );
 }
