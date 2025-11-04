@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Volume2, VolumeX, MessageCircle, X, Loader2 } from "lucide-react";
+import { Volume2, VolumeX, MessageCircle, X, Loader2, Mic, MicOff } from "lucide-react";
 import { toast } from "sonner";
-import { speakWithIsabella, checkIsabellaVoice } from "@/integrations/elevenlabs/modules/isabella.voice";
+import { useIsabellaVoice } from "@/hooks/useIsabellaVoice";
+import { useIsabellaChat } from "@/hooks/useIsabellaChat";
 
 interface IsabellaVoiceProps {
   isActive: boolean;
@@ -12,58 +13,45 @@ interface IsabellaVoiceProps {
 }
 
 export default function IsabellaVoice({ isActive, onClose, userName }: IsabellaVoiceProps) {
-  const [isSpeaking, setIsSpeaking] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
-  const [isAvailable, setIsAvailable] = useState(true);
-  const [isChecking, setIsChecking] = useState(true);
+  const [inputValue, setInputValue] = useState("");
+  const { speak, listen, isSpeaking, isListening } = useIsabellaVoice();
+  const { messages, sendMessage, isLoading } = useIsabellaChat();
 
   useEffect(() => {
-    checkVoiceAvailability();
-  }, []);
-
-  useEffect(() => {
-    if (isActive && !isMuted && isAvailable) {
+    if (isActive && !isMuted) {
       playWelcome();
     }
-  }, [isActive, isAvailable]);
-
-  const checkVoiceAvailability = async () => {
-    setIsChecking(true);
-    const available = await checkIsabellaVoice();
-    setIsAvailable(available);
-    setIsChecking(false);
-    
-    if (!available) {
-      toast.error('Isabella Voice no disponible. Verifica ELEVENLABS_API_KEY en secrets.');
-    }
-  };
+  }, [isActive]);
 
   const playWelcome = async () => {
-    try {
-      setIsSpeaking(true);
-      const welcomeText = userName 
-        ? `Hola ${userName}, bienvenido a TAMV MD-X4. Soy Isabella, tu asistente cuántica.`
-        : `Bienvenido a TAMV MD-X4. Soy Isabella, tu asistente de inteligencia artificial cuántica.`;
-      
-      await speakWithIsabella(welcomeText, 'empathy');
-      toast.success("Isabella AI™ activada");
-    } catch (error) {
-      console.error("Error activating Isabella voice:", error);
-    } finally {
-      setIsSpeaking(false);
+    const welcomeText = userName 
+      ? `Hola ${userName}, bienvenido a TAMV MD-X4. Soy Isabella, tu asistente cuántica.`
+      : `Bienvenido a TAMV MD-X4. Soy Isabella, tu asistente de inteligencia artificial cuántica.`;
+    
+    await speak(welcomeText, 'empathy');
+    toast.success("Isabella AI™ activada");
+  };
+
+  const handleSendMessage = async () => {
+    if (!inputValue.trim() || isLoading) return;
+    
+    const message = inputValue.trim();
+    setInputValue("");
+    await sendMessage(message);
+    
+    // Speak the last assistant message
+    const lastMessage = messages[messages.length - 1];
+    if (lastMessage?.role === 'assistant' && !isMuted) {
+      await speak(lastMessage.content, 'neutral');
     }
   };
 
-  const speak = async (text: string, emotion?: any) => {
-    if (isMuted || !isAvailable) return;
-    try {
-      setIsSpeaking(true);
-      await speakWithIsabella(text, emotion);
-    } catch (error) {
-      console.error("Error playing Isabella voice:", error);
-      toast.error('Error al reproducir voz');
-    } finally {
-      setIsSpeaking(false);
+  const handleVoiceInput = async () => {
+    const transcription = await listen();
+    if (transcription) {
+      setInputValue(transcription);
+      toast.success("Mensaje transcrito");
     }
   };
 
@@ -131,47 +119,55 @@ export default function IsabellaVoice({ isActive, onClose, userName }: IsabellaV
               ))}
             </div>
 
-            {/* Quick Actions */}
-            <div className="space-y-2">
+            {/* Chat Input */}
+            <div className="space-y-3">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                  placeholder="Escribe o habla con Isabella..."
+                  className="flex-1 px-3 py-2 rounded-lg bg-background/50 border border-primary/20 text-sm focus:outline-none focus:border-primary"
+                  disabled={isLoading || isSpeaking}
+                />
+                <Button
+                  size="icon"
+                  variant={isListening ? "destructive" : "outline"}
+                  onClick={handleVoiceInput}
+                  disabled={isLoading || isSpeaking}
+                  className="border-primary/30"
+                >
+                  {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                </Button>
+              </div>
+
               <Button
                 variant="outline"
                 size="sm"
-                className="w-full justify-start border-primary/30"
-                onClick={() => speak("Bienvenido a TAMV MD-X4. Soy Isabella, tu compañera digital consciente.", 'empathy')}
-                disabled={isSpeaking || isMuted || !isAvailable}
+                className="w-full border-primary/30"
+                onClick={handleSendMessage}
+                disabled={!inputValue.trim() || isLoading || isSpeaking}
               >
-                {isSpeaking ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
-                Presentación
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full justify-start border-accent/30"
-                onClick={() => speak("Explora DreamSpaces para crear experiencias multisensoriales únicas.", 'guidance')}
-                disabled={isSpeaking || isMuted || !isAvailable}
-              >
-                Guía Rápida
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full justify-start border-secondary/30"
-                onClick={() => speak("Tu resonancia emocional está creando un impacto positivo en el ecosistema.", 'celebration')}
-                disabled={isSpeaking || isMuted || !isAvailable}
-              >
-                Estado Emocional
+                {isLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+                Enviar Mensaje
               </Button>
             </div>
-            
-            {!isAvailable && !isChecking && (
-              <p className="text-xs text-energy mt-2 text-center">
-                ⚠️ Voz deshabilitada: Configura ELEVENLABS_API_KEY
-              </p>
+
+            {/* Messages Display */}
+            {messages.length > 0 && (
+              <div className="mt-4 max-h-40 overflow-y-auto space-y-2">
+                {messages.slice(-3).map((msg, i) => (
+                  <div key={i} className={`text-xs p-2 rounded ${msg.role === 'user' ? 'bg-primary/10 text-right' : 'bg-accent/10'}`}>
+                    {msg.content}
+                  </div>
+                ))}
+              </div>
             )}
 
             {/* Status */}
             <div className="mt-4 pt-4 border-t border-primary/20 text-xs text-center text-muted-foreground">
-              {isSpeaking ? "Hablando..." : isMuted ? "Silenciada" : "Lista para ayudar"}
+              {isSpeaking ? "Hablando..." : isListening ? "Escuchando..." : isLoading ? "Pensando..." : isMuted ? "Silenciada" : "Lista para ayudar"}
             </div>
           </div>
         </motion.div>
