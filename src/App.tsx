@@ -5,8 +5,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import SidebarQuantum from "./components/SidebarQuantum";
 import TopBarQuantum from "./components/TopBarQuantum";
+import WelcomeMessage from "./components/WelcomeMessage";
 import Auth from "./pages/Auth";
 import GlobalWall from "./pages/GlobalWall";
+import DreamSpaces from "./pages/DreamSpaces";
+import Wallet from "./pages/Wallet";
+import AudioKaos from "./pages/AudioKaos";
+import Projects from "./pages/Projects";
 import Profile from "./pages/Profile";
 import Chats from "./pages/Chats";
 import Gallery from "./pages/Gallery";
@@ -26,6 +31,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <WelcomeMessage />
       <BrowserRouter>
         <div className="min-h-screen flex w-full bg-background">
           <SidebarQuantum />
@@ -45,6 +51,10 @@ const App = () => (
                 <Route path="/university" element={<University />} />
                 <Route path="/groups" element={<Groups />} />
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/dreamspaces" element={<DreamSpaces />} />
+                <Route path="/wallet" element={<Wallet />} />
+                <Route path="/audio-kaos" element={<AudioKaos />} />
+                <Route path="/projects" element={<Projects />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>
