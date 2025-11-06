@@ -72,9 +72,9 @@ export default function DreamSpaces() {
           </div>
         </div>
 
-        <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}>
+      <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}>
           <h2 className="text-4xl font-orbitron font-bold text-gradient-quantum mb-8 text-center">Vista Inmersiva 3D</h2>
-          <DreamSpaceViewer />
+          <DreamSpaceViewer onClose={() => {}} />
           <div className="mt-6 text-center">
             <Button size="lg" className="bg-gradient-quantum hover:scale-110 transition-transform">
               <Sparkles className="w-5 h-5 mr-2" />
